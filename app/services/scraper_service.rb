@@ -1,0 +1,51 @@
+class ScraperService
+  require 'httparty'
+  require 'nokogiri'
+
+
+
+  # attr_accessor :parse_page
+  class << self
+    def scrap_job params
+      # HTTParty.get("https://www.karriere.at/jobs/project-manager/wien")
+      begin
+        # doc = HTTParty.get("https://www.karriere.at/jobs")
+        doc = HTTParty.get("https://www.karriere.at/jobs/#{params[:Designation].parameterize}/#{params[:Location].downcase}")
+        jobs = Array.new
+        parse_page ||= Nokogiri::HTML(doc)
+        datas =  parse_page.css('div.m-jobsListItem__dataContainer') #jobs
+        page = 1
+        per_page = datas.count
+        total = parse_page.css('div.m-pagination').css('div.m-pagination__inner').css('span.m-pagination__meta').text.split(' ')[2].to_i * per_page
+        last_page = (total.to_f / per_page.to_f).round
+        while page <= 2
+          pagination_url = page > 1 ? "https://www.karriere.at/jobs/#{params[:Designation].parameterize}/#{params[:Location].downcase}?page=#{page}" : "https://www.karriere.at/jobs/#{params[:Designation].parameterize}/#{params[:Location].downcase}"
+          pagination_doc = HTTParty.get(pagination_url)
+          pagination_parse_page ||= Nokogiri::HTML(pagination_doc)
+          pagination_datas =  pagination_parse_page.css('div.m-jobsListItem__dataContainer')
+          pagination_datas.each do |data|
+            url = data.css('h2.m-jobsListItem__title').css('a')[0].attributes['href'].value
+            job_url = HTTParty.get(url)
+            parse_job_url ||= Nokogiri::HTML(job_url)
+            job_content = parse_job_url.css('div.l-master__content').css('div.c-jobDetail').css('div.m-jobDetailContent').css('div.m-jobDetailContent__inner').css('div.m-jobContent').css('div.m-jobContent__jobDetail').text
+            job_hash = {
+                      title: data.css('h2.m-jobsListItem__title').text.strip,
+                      company: data.css('div.m-jobsListItem__meta').css('div.m-jobsListItem__company').text.strip,
+                      url: data.css('h2.m-jobsListItem__title').css('a')[0].attributes['href'].value.strip,
+                      location:  (data.css('div.m-jobsListItem__meta').css('div.m-jobsListItem__wrap').css('ul.m-jobsListItem__locations').css('li.m-jobsListItem__location').css('a')[0].attributes['data-location'].value.strip rescue nil),
+                      date: data.css('div.m-jobsListItem__meta').css('div.m-jobsListItem__wrap').css('span.m-jobsListItem__date')[0].text.gsub("am","").strip,
+                      content: job_content.strip
+                    }
+            jobs << job_hash
+          end
+          page += 1
+        end
+        parsed_job = jobs.map do |attrs|
+          Job.new(attrs)
+        end
+        Job.import(parsed_job)
+      rescue Exception => e
+      end
+    end
+  end
+end
