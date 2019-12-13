@@ -4,7 +4,7 @@ Rails.application.routes.draw do
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
   post 'seacrh_job', to: 'dashboards#seacrh_job'
   get 'display', to: 'dashboards#display'
-  devise_for :users, :controllers => {:registrations => "registrations"}
+  devise_for :users
 
   resources :billings
   resources :subscriptions

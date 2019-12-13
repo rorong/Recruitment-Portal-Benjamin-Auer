@@ -6,22 +6,15 @@
   <body>
     <p>
       <table style="width:100%">
+        <h3>Dear <%= @user.fullname %></h3>
     <tr>
       <th>Title</th>
-      <th>Company</th>
-      <th>Location</th>
       <th>Url</th>
-      <th>Date</th>
-      <th>Content</th>
     </tr>
   <% @jobs.each do |job| %>
     <tr>
       <td><%= job.title %></td>
-      <td><%= job.company %></td>
-      <td><%= job.location %></td>
       <td><%= job.url %></td>
-      <td><%= job.date.strftime('%d.%m.%y') %></td>
-      <td><%= job.content.truncate(100) %></td>
     </tr>
   <% end %>
     </p>

@@ -33,7 +33,6 @@ class DynamicScraperService
           parse_job_url ||= Nokogiri::HTML(browser.html)
           # job_content =  find_job_description(parse_job_url, browser)
           # job_content = (parse_job_url.css('#content-main').css('.content').text.present? || parse_job_url.css('#job-eblinger').text.present?) ? (parse_job_url.css('#content-main').css('.content').text || parse_job_url.css('#job-eblinger').text) : parse_job_url.css('#content-main').css('.content-container-inserat').css('.js-embed-container').css('.js-embed-output').css('.jobAd').css('.companyDescription').text.strip
-          binding.pry
           job_content = if parse_job_url.css('#content-main').css('.content').text.present?
                           parse_job_url.css('#content-main').css('.content').text
                         elsif parse_job_url.css('#job-eblinger').text.present?
@@ -53,21 +52,6 @@ class DynamicScraperService
                         elsif browser.iframe(:id, "iframe1").text.present?
                           browser.iframe(:id, "iframe1").text
                         end
-          # job_content = parse_job_url.css('#job-pockethouse').text.present? ? parse_job_url.css('#job-pockethouse').text : parse_job_url.css('.col').text.strip
-          # if parse_job_url.css('#content-main').css('.content').text.present?
-          #   job_content = parse_job_url.css('#content-main').css('.content').text
-
-          # elsif parse_job_url.css('#content-main').css('.content-container-inserat').css('.js-embed-container').css('.js-embed-output').css('.jobAd').css('.companyDescription').present?
-
-          #   job_content = parse_job_url.css('#content-main').css('.content-container-inserat').css('.js-embed-container').css('.js-embed-output').css('.jobAd').css('.companyDescription').text
-
-          # elsif browser.iframe(id: "iframe1").text.present?
-          #   binding.pry
-          #   job_content = browser.iframe(id: "iframe1").text
-
-          # elsif parse_job_url.css('#content-main').css('.content-container-inserat').css('#job-eblinger').present?
-          #   job_content = parse_job_url.css('#content-main').css('.content-container-inserat').css('#job-eblinger').text
-          # end
           get_date = find_date(data.attributes['title'].value.gsub('|',',').gsub(',',',').split(','))
 
           job_hash = {
@@ -85,7 +69,6 @@ class DynamicScraperService
        parsed_job = jobs.map do |attrs|
         Job.new(attrs)
        end
-       #binding.pry
        Job.import(parsed_job)
        # rescue Exception => e
     # end

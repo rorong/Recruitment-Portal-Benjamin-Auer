@@ -17,4 +17,9 @@ class User < ApplicationRecord
   def self.job_mail user
     JobMailer.job_email(user)
   end
+
+  def fullname
+    "#{first_name} #{last_name}"
+  end
+
 end

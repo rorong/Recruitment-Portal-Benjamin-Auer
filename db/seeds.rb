@@ -6,22 +6,27 @@
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
 
-plan = Stripe::Plan.create(
-  :amount => 10,
-  :interval => 'month',
-  :name => 'Basic Plan',
-  :currency => 'euro',
-  :id => 'basic'
-)
+# plan = Stripe::Plan.create(
+#   :amount => 10,
+#   :interval => 'month',
+#   :name => 'Basic Plan',
+#   :currency => 'euro',
+#   :id => 'basic'
+# )
 
-Plan.create(name: plan.name, stripe_id: plan.id, display_price: (plan.amount.to_f / 100))
+# Plan.create(name: plan.name, stripe_id: plan.id, display_price: (plan.amount.to_f / 100))
 
-Stripe::Plan.create(
-  :amount => 100,
-  :interval => 'year',
-  :name => 'Gold Plan',
-  :currency => 'euro',
-  :id => 'gold'
-)
+# Stripe::Plan.create(
+#   :amount => 100,
+#   :interval => 'year',
+#   :name => 'Gold Plan',
+#   :currency => 'euro',
+#   :id => 'gold'
+# )
 
-Plan.create(name: plan.name, stripe_id: plan.id, display_price: (plan.amount.to_f / 100))
+# Plan.create(name: plan.name, stripe_id: plan.id, display_price: (plan.amount.to_f / 100))
+
+
+SecurityQuestion.create(question: "What is your place of birth?")
+SecurityQuestion.create(question: "What is your first school?")
+SecurityQuestion.create(question: "What is your mother's side maiden name?")

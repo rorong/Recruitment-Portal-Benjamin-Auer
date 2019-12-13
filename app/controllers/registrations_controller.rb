@@ -5,15 +5,18 @@ class RegistrationsController < Devise::RegistrationsController
       user = User.new(user_params)
       if user.save && params[:security_question].present?
         sq = SecurityQuestion.find_by(question: params[:security_question])
-        user_question = user.security_questions.create(question: params[:security_question])
-        answer = Answer.create(answer: params[:answer])
-        user_question.answer = answer
+        # user_question = user.security_questions.create(question: params[:security_question])
+        user_question =  user.security_questions << sq if sq
+        answer = Answer.create(answer: params[:answer].downcase)
+        user_question.last.answer = answer
+        session[:user_id] = user.id
+        flash[:alert] = "Succesfully Signed in"
         redirect_to root_path
       end
     end
   end
 
-   def update
+  def update
     if params[:security_question].present?
       sq = SecurityQuestion.find_by(question: params[:security_question])
       if current_user.security_questions.pluck(:question).include? sq.question
@@ -46,15 +49,8 @@ class RegistrationsController < Devise::RegistrationsController
       flash[:danger] = "Please select the security question"
       redirect_to edit_user_registration_path
     end
-
   end
 
-  # protected
-
-  # def update_resource(resource, params)
-  #   return super if params["password"]&.present?
-  #   resource.update_without_password(params.except(params))
-  # end
 
   private
 

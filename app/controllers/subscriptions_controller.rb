@@ -1,6 +1,8 @@
 class SubscriptionsController < ApplicationController
   before_action :authenticate_user!, except: [:new]
   before_action :redirect_to_signup, only: [:new]
+
+
   def show
   end
 
@@ -34,7 +36,6 @@ class SubscriptionsController < ApplicationController
                  else
                    Stripe::Customer.create(email: current_user.email, source: token)
                  end
-                 # binding.pry
       subscription = Stripe::Subscription.create({
                     customer: customer.id,
                     items: [{plan: plan.id}],
@@ -77,8 +78,7 @@ class SubscriptionsController < ApplicationController
     # job_include = []
     # not_include_job = []
     # current_user.
-    job_data = Job.where("content  ~* ? or content  ~* ? or content ~*  ?", current_user.include_job1, current_user.include_job2,
-      current_user.include_job3)
+    job_data = Job.where("content  ~* ? or content  ~* ? or content ~*  ?", current_user.include_job1, current_user.include_job2, current_user.include_job3)
 
     # mail_job = Job.where("content  ~* ?", "project manager")
     # mail_job.merge!(Job.where('content'.include? current_user.include_job2))
