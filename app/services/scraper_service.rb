@@ -18,7 +18,7 @@ class ScraperService
         per_page = datas.count
         total = parse_page.css('div.m-pagination').css('div.m-pagination__inner').css('span.m-pagination__meta').text.split(' ')[2].to_i * per_page
         last_page = (total.to_f / per_page.to_f).round
-        while page <= 2
+        while page <= last_page
           pagination_url = page > 1 ? "https://www.karriere.at/jobs/#{params[:Designation].parameterize}/#{params[:Location].downcase}?page=#{page}" : "https://www.karriere.at/jobs/#{params[:Designation].parameterize}/#{params[:Location].downcase}"
           pagination_doc = HTTParty.get(pagination_url)
           pagination_parse_page ||= Nokogiri::HTML(pagination_doc)

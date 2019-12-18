@@ -2,7 +2,7 @@ $(document).on('ready turbolinks:load', function() {
   var show_error, stripeResponseHandler, submitHandler;
   submitHandler = function (event) {
     var $form = $(event.target);
-    // $form.find("input[type=submit]").prop("disabled", true);
+    $form.find("input[type=submit]").prop("disabled", true);
 
   //If Stripe was initialized correctly this will create a token using the credit card info
 
@@ -39,11 +39,11 @@ stripeResponseHandler = function (status, response) {
 };
 
 show_error = function (message) {
-  if($("#flash-messages").size() < 1){
+  if($("#flash-messages")){
     $('div.container.main div:first').prepend("<div id='flash-messages'></div>")
   }
 $("#flash-messages").html('<div class="alert alert-warning"><a class="close" data-dismiss="alert">×</a><div id="flash_alert">' + message + '</div></div>');
-$('.alert').delay(5000).fadeOut(3000);
-return false;
-};
+  $('.alert').delay(5000).fadeOut(3000);
+  return false;
+  };
 });
