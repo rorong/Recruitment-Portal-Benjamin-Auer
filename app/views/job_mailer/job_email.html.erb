@@ -2,10 +2,33 @@
 <html>
   <head>
     <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+    <style type="text/css">
+      #job_details {
+        font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+      }
+
+      #job_details td, #job_details th {
+        border: 1px solid #ddd;
+        padding: 8px;
+      }
+
+      #job_details tr:nth-child(even){background-color: #f2f2f2;}
+
+      #job_details tr:hover {background-color: #ddd;}
+
+      #job_details th {
+        padding-top: 12px;
+        padding-bottom: 12px;
+        text-align: left;
+        background-color: #4CAF50;
+        color: white;
+      }
+  </style>
   </head>
   <body>
-    <p>
-      <table style="width:100%">
+      <table id="job_details">
         <h3>Dear <%= @user.fullname %></h3>
     <tr>
       <th>Title</th>
@@ -17,6 +40,6 @@
       <td><%= job.url %></td>
     </tr>
   <% end %>
-    </p>
+  </table>
   </body>
 </html>

@@ -6,12 +6,12 @@ class DashboardsController < ApplicationController
 
   def index
     job = Job.select { |m| m.url.include? "karriere" }
-    @jobs = job.paginate(page: params[:page], per_page: 16)
+    @jobs = job.paginate(page: params[:page], per_page: 15)
   end
 
   def display
     job = Job.select { |m| m.url.include? "derstandard" }
-    @jobs = job.paginate(page: params[:page], per_page: 16)
+    @jobs = job.paginate(page: params[:page], per_page: 15)
   end
 
   def seacrh_job

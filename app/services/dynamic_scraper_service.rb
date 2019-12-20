@@ -49,6 +49,12 @@ class DynamicScraperService
                            parse_job_url.css('#jobad').css('.jobad-main-container').text
                         elsif parse_job_url.css('.inhalt').text.present?
                           parse_job_url.css('.inhalt').text
+                        elsif parse_job_url.css('.abstand-aussen').text.present?
+                            parse_job_url.css('.abstand-aussen').text
+                        elsif parse_job_url.css('.jobAd').text.present?
+                            parse_job_url.css('.jobAd').text
+                        elsif parse_job_url.css('#job_content_left').text.present?
+                           parse_job_url.css('#job_content_left').text
                         elsif browser.iframe(:id, "iframe1").text.present?
                           browser.iframe(:id, "iframe1").text
                         end

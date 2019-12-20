@@ -4,6 +4,6 @@ class JobMailer < ApplicationMailer
   def job_email(user, job_hash)
     @user = user
     @jobs = job_hash
-    mail(to: @user.email, subject: 'Sample Email')
+    mail(to: @user.email, subject: 'Jobs')
   end
 end

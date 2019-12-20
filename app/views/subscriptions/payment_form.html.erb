@@ -7,7 +7,7 @@
     <div id="flash-messages"></div>
      <div class="panel-heading display-table" >
         <div class="row display-tr" >
-          <h3 class="panel-title display-td" >Payment Details</h3>
+          <h3 class="panel-title display-td">Payment Details</h3>
             <div class="display-td" >
               <img class="img-responsive pull-right" src="http://i76.imgup.net/accepted_c22e0.png">
             </div>
@@ -26,12 +26,12 @@
         <div class="form-group col-md-6">
           <div class="col-md-12">
             <%= p.label :card_expires, "Card Expires", data: { stripe: 'label'} %>
-             <%= p.hidden_field :paln_id, value: params[:plan_is] %>
+            <%= p.hidden_field :paln_id, value: params[:plan_is] %>
           </div>
           <div class="col-md-3">
             <%= p.select :card_expires_month, options_for_select(Payment.month_options),
             { include_blank: 'Month' },"data-stripe" => "exp-month",class: "form-control", required: true %>
-          </div>
+          </div><br>
           <div class="col-md-3">
             <%= p.select :card_expires_year, options_for_select(Payment.year_options.push),{ include_blank: 'Year' },class: "form-control",data: { stripe: "exp-year" }, required: true %>
           </div>
