@@ -1,0 +1,15 @@
+---
+:concurrency: 1
+:queues:
+  - default
+  - mailers
+:schedule:
+  # auto_renewal_subscriptions:
+  #   cron: '59 23 * * * *'
+  #   class: SubscriptionAutoRenewal
+  scrap_job_worker:
+    cron: '0 0 * * * *'   # Runs every hour
+    class: ScrapJobWorker
+  dynamic_scrap_worker:
+    cron: '0 0 * * * *'   # Runs every hour
+    class: DynamicScrapWorker

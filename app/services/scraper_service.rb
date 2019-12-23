@@ -8,12 +8,12 @@ class ScraperService
 
   # attr_accessor :parse_page
   class << self
-    def scrap_job params
+    def scrap_job
       # HTTParty.get("https://www.karriere.at/jobs/project-manager/wien")
       begin
         # doc = HTTParty.get("https://www.karriere.at/jobs")
         # doc = HTTParty.get("https://www.karriere.at/jobs/#{params[:Designation].parameterize}/#{params[:Location].downcase}")
-        parse_page = Nokogiri::HTML(open("https://www.karriere.at/jobs/#{params[:Designation].parameterize}/#{params[:Location].downcase}"))
+        parse_page = Nokogiri::HTML(open("https://www.karriere.at/jobs/project-manager/wien"))
         jobs = Array.new
         # parse_page ||= Nokogiri::HTML(doc)
         datas =  parse_page.css('div.m-jobsListItem__dataContainer') #jobs
@@ -21,8 +21,8 @@ class ScraperService
         per_page = datas.count
         total = parse_page.css('div.m-pagination').css('div.m-pagination__inner').css('span.m-pagination__meta').text.split(' ')[2].to_i * per_page
         last_page = (total.to_f / per_page.to_f).round
-        while page <= last_page
-          pagination_url = page > 1 ? "https://www.karriere.at/jobs/#{params[:Designation].parameterize}/#{params[:Location].downcase}?page=#{page}" : "https://www.karriere.at/jobs/#{params[:Designation].parameterize}/#{params[:Location].downcase}"
+        while page <= 2
+          pagination_url = page > 1 ? "https://www.karriere.at/jobs/project-manager/wien?page=#{page}" : "https://www.karriere.at/jobs/project-manager/wien"
           # pagination_doc = HTTParty.get(pagination_url)
           pagination_parse_page = Nokogiri::HTML(open(pagination_url))
 
