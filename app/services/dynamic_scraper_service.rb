@@ -92,6 +92,7 @@ class DynamicScraperService
        end
        Job.import(parsed_job)
        rescue Exception => e
+        puts e.message
     end
   end
 
