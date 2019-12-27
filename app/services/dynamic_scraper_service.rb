@@ -8,7 +8,14 @@ class DynamicScraperService
 
 
   def self.dynamic_scrap
-    # begin
+     opts = {
+        headless: true
+    }
+
+    if (chrome_bin = ENV.fetch('/app/.apt/usr/bin/google-chrome', nil))
+      opts.merge!( options: {binary: chrome_bin})
+    end
+    begin
       jobs = Array.new
        browser = Watir::Browser.new :chrome
        browser.goto('https://jobs.derstandard.at/jobsuche')
@@ -50,11 +57,19 @@ class DynamicScraperService
                         elsif parse_job_url.css('.inhalt').text.present?
                           parse_job_url.css('.inhalt').text
                         elsif parse_job_url.css('.abstand-aussen').text.present?
-                            parse_job_url.css('.abstand-aussen').text
+                          parse_job_url.css('.abstand-aussen').text
                         elsif parse_job_url.css('.jobAd').text.present?
-                            parse_job_url.css('.jobAd').text
+                          parse_job_url.css('.jobAd').text
                         elsif parse_job_url.css('#job_content_left').text.present?
-                           parse_job_url.css('#job_content_left').text
+                          parse_job_url.css('#job_content_left').text
+                        elsif parse_job_url.css('#job-ims').css('.left').text.present?
+                          parse_job_url.css('#job-ims').css('.left').text
+                        elsif parse_job_url.css('#jobAd').css('.job-body').text.present?
+                          parse_job_url.css('#jobAd').css('.job-body').text
+                        elsif parse_job_url.css('#job-lindlpower').css('.row').text.present?
+                          parse_job_url.css('#job-lindlpower').css('.row').text
+                        elsif parse_job_url.css('#job-santander').css('.job__left-column').text.present?
+                          parse_job_url.css('#job-santander').css('.job__left-column').text
                         elsif browser.iframe(:id, "iframe1").text.present?
                           browser.iframe(:id, "iframe1").text
                         end
@@ -76,8 +91,8 @@ class DynamicScraperService
         Job.new(attrs)
        end
        Job.import(parsed_job)
-       # rescue Exception => e
-    # end
+       rescue Exception => e
+    end
   end
 
     # def self.find_job_description(parse_job_url, browser)
