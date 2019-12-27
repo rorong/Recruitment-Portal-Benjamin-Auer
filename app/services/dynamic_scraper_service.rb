@@ -15,6 +15,7 @@ class DynamicScraperService
     if (chrome_bin = ENV.fetch('/app/.apt/usr/bin/google-chrome', nil))
       opts.merge!( options: {binary: chrome_bin})
     end
+
     begin
       jobs = Array.new
        browser = Watir::Browser.new :chrome
