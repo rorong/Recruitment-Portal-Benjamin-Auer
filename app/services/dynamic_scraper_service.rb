@@ -12,7 +12,6 @@ class DynamicScraperService
     #  opts = {
     #     headless: true
     # }
-
     # if (chrome_bin = ENV.fetch('/app/.apt/usr/bin/google-chrome', nil))
     #   opts.merge!( options: {binary: chrome_bin})
     # end
