@@ -50,6 +50,7 @@ gem 'webdrivers', '~> 3.0'
 gem 'stripe', '~> 1.57', '>= 1.57.1'
 gem 'figaro'
 gem 'sidekiq'
+gem 'headless'
 
 
 
