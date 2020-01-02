@@ -3,7 +3,7 @@ class DynamicScraperService
   require 'httparty'
   require 'webdrivers'
   require 'watir'
-  require 'headless'
+  # require 'headless'
   require 'net/http'
   require 'date'
 
@@ -15,7 +15,7 @@ class DynamicScraperService
     # if (chrome_bin = ENV.fetch('/app/.apt/usr/bin/google-chrome', nil))
     #   opts.merge!( options: {binary: chrome_bin})
     # end
-    Headless.ly do
+    # Headless.ly do
       begin
         jobs = Array.new
          browser = Watir::Browser.new :chrome
@@ -95,7 +95,7 @@ class DynamicScraperService
          rescue Exception => e
           puts e.message
       end
-    end
+    # end
   end
 
     # def self.find_job_description(parse_job_url, browser)
