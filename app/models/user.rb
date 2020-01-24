@@ -5,10 +5,14 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable
 
   has_many :security_questions
+  has_many :job_searches
   has_one :subscription, dependent: :destroy
   has_one  :plan, through: :subscription
 
   has_one :payment
+
+
+  #validates :first_name, :last_name, presence: true
 
   def password_required?
     false

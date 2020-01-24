@@ -30,7 +30,7 @@ class DynamicScraperService
          per_page = datas.count
          total = parse_page.css('#jobSearchMenuSection').css('.page-list-count').text.split(' ')[2].to_i * per_page
          last_page = (total.to_f / per_page.to_f).round
-         while page <= 2
+         while page <= last_page
            pagination_url = "https://jobs.derstandard.at/jobsuche/#{page}"
            browser.goto(pagination_url)
            pagination_parse_page ||= Nokogiri::HTML(browser.html)
@@ -71,8 +71,29 @@ class DynamicScraperService
                             parse_job_url.css('#job-lindlpower').css('.row').text
                           elsif parse_job_url.css('#job-santander').css('.job__left-column').text.present?
                             parse_job_url.css('#job-santander').css('.job__left-column').text
+                          elsif parse_job_url.css('.job-box').text.present?
+                            parse_job_url.css('.job-box').text
+                          elsif parse_job_url.css('.content>ul>li').text.present?
+                            parse_job_url.css('.content>ul>li').text
+                          elsif parse_job_url.css('#content-main').css('.content-container-inserat').css('.js-embed-container').text.present?
+                            c = parse_job_url.css('#content-main').css('.content-container-inserat').css('.js-embed-container').text.delete!("\n").strip
+                            coder = HTMLEntities.new
+                            cnt = Nokogiri::HTML(coder.decode(c))
+                            coder = HTMLEntities.new
+                            content = Nokogiri::HTML(coder.decode(cnt.to_html))
+                            text =  if content.css('.content').text.present?
+                                      content.css('.content').text.strip
+                                    elsif content.css('.ja-wrap').text.present?
+                                      content.css('.ja-wrap').text.strip
+                                    elsif content.css('.jobAd').text.present?
+                                      content.css('.jobAd').text.strip
+                                    elsif content.css('#ISGAd').text.present?
+                                      content.css('.jobAd').text.strip
+                                    else
+                                    end
                           elsif browser.iframe(:id, "iframe1").text.present?
                             browser.iframe(:id, "iframe1").text
+                          else
                           end
             get_date = find_date(data.attributes['title'].value.gsub('|',',').gsub(',',',').split(','))
 

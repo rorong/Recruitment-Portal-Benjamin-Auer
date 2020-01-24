@@ -28,18 +28,18 @@
   </style>
   </head>
   <body>
-      <table id="job_details">
-        <h3>Dear <%= @user.fullname %></h3>
-    <tr>
-      <th>Title</th>
-      <th>Url</th>
-    </tr>
-  <% @jobs.each do |job| %>
-    <tr>
-      <td><%= job.title %></td>
-      <td><%= job.url %></td>
-    </tr>
-  <% end %>
-  </table>
+    <table id="job_details">
+      <h3>Dear <%= @user.fullname %></h3>
+      <tr>
+        <th>Title</th>
+        <th>Url</th>
+      </tr>
+      <% @jobs.each do |job| %>
+        <tr>
+          <td><%= job.title %></td>
+          <td><%= job.url %></td>
+        </tr>
+      <% end %>
+    </table>
   </body>
 </html>

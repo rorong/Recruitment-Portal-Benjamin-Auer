@@ -47,7 +47,7 @@ gem 'will_paginate', '~> 3.1', '>= 3.1.6'
 gem 'watir'
 gem 'selenium-webdriver'
 gem 'webdrivers', '~> 3.0'
-gem 'stripe', '~> 1.57', '>= 1.57.1'
+gem 'stripe', '~> 3.3', '>= 3.3.1'
 gem 'figaro'
 gem 'sidekiq'
 gem 'headless'
@@ -77,3 +77,4 @@ end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
+gem 'htmlentities', '~> 4.3', '>= 4.3.4'

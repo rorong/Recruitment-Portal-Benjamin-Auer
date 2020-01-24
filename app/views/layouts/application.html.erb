@@ -4,11 +4,11 @@
     <title>JobScrapper</title>
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
-      <!-- <script type="text/javascript" src="https://js.stripe.com/v2/"></script> -->
-    <%#= javascript_include_tag 'application','https://js.stripe.com/v2/', 'data-turbolinks-track' => true %>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <%= javascript_include_tag "https://js.stripe.com/v2/" %>
     <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
-    <%#= javascript_include_tag 'https://checkout.stripe.com/checkout.js' %>
+    <script src="https://js.stripe.com/v3/"></script>
   </head>
     <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
     <body>
@@ -17,15 +17,17 @@
       <% else %>
         <%= render 'layouts/header_after_login'%>
       <% end %>
-      <div class="container">
-        <% if notice %>
-          <p class="alert alert-success"><%= notice %></p>
-        <% end %>
-        <% if alert %>
-          <p class="alert alert-danger"><%= alert %></p>
-        <% end %>
-        <%= yield %>
-      </div>
-        <%= render partial: 'layouts/footer'%>
+      <section class="login_wrapper">
+        <div class="container">
+          <% if notice %>
+            <p class="alert alert-success"><%= notice %></p>
+          <% end %>
+          <% if alert %>
+            <p class="alert alert-danger"><%= alert %></p>
+          <% end %>
+          <%= yield %>
+        </div>
+      </section>
+      <%= render partial: 'layouts/footer'%>
     </body>
 </html>

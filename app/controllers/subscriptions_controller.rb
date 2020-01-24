@@ -1,96 +1,94 @@
 class SubscriptionsController < ApplicationController
   before_action :authenticate_user!, except: [:new]
   before_action :redirect_to_signup, only: [:new]
-
-
-  def show
-  end
+  before_action :fetch_plan, only: [:payment_form]
 
   def fetch_plan
-    # @stripe_list = Stripe::Plan.all
-    # @plans = @stripe_list[:data]
-    Stripe.api_key = 'sk_test_9yirvVjUk38CKrdRZcXI1wPw'
+    Stripe.api_key = ENV['stripe_secret_key']
     @plan = Stripe::Plan.all
   end
 
-  def payment_form
-    #@payment = Payment.new
-  end
-
-  def new
-  end
-
   def create
-    Stripe.api_key = 'sk_test_9yirvVjUk38CKrdRZcXI1wPw'
-    if params[:payment].present?
-      plan_id =  params[:payment][:paln_id]
+    if current_user.present? && params[:plan_id].present?
+      plan_id =  params[:plan_id]
       plan = Stripe::Plan.retrieve(plan_id)
-      token = params[:payment][:token]
 
-      @payment = Payment.new({ email: current_user.email,
-        token: params[:payment][:token], user_id: current_user.id })
+      if params[:payment_method_id].present?
+        #payment = Payment.create(email: current_user.email, user_id: current_user.id)
 
-      # product = Stripe::Product.retrieve(Rails.application.credentials.book_library)
-      customer = if current_user.stripe_id?
-                   Stripe::Customer.retrieve(current_user.stripe_id)
-                 else
-                   Stripe::Customer.create(email: current_user.email, source: token)
-                 end
-      subscription = Stripe::Subscription.create({
-                    customer: customer.id,
-                    items: [{plan: plan.id}],
-                  })
+        #@payment = Payment.new({ email: current_user.email, user_id: current_user.id })
 
-      @payment.process_payment(plan, customer)
-      @payment.save
+        customer =  if current_user.stripe_id?
+                      Stripe::Customer.retrieve(current_user.stripe_id)
+                    else
+                      Stripe::Customer.create({
+                        payment_method: params[:payment_method_id],
+                        email: current_user.email,
+                        invoice_settings: {
+                          default_payment_method: params[:payment_method_id],
+                        },
+                      })
+                    end
 
-      user_plan = Plan.create(stripe_id: params[:payment][:paln_id],
-        name: plan['nickname'], display_price: plan['amount'])
-      Subscription.create(user_id: current_user.id,
-        plan_id: user_plan.id)
-      # subscription = customer.subscriptions.create(plan: plan.id)
+        subscription =  Stripe::Subscription.create({
+                          customer: customer.id,
+                          items: [{plan: plan.id}],
+                        }) if customer.present?
 
-      # options = {
-      #   stripe_id: customer.id,
-      #   stripe_subscription_id: subscription.id,
-      #   subscribed: true,
-      # }
+        #@payment.process_payment(plan, customer)
+        #@payment.save
 
-      # options.merge!(
-      #   card_last4: params[:user][:card_last4],
-      #   card_exp_month: params[:user][:card_exp_month],
-      #   card_exp_year: params[:user][:card_exp_year],
-      #   card_type: params[:user][:card_type]
-      # ) if params[:user][:card_last4]
+        user_plan = Plan.create(stripe_id: params[:plan_id],
+          name: plan['nickname'], display_price: plan['amount'])
 
-      # current_user.update(options)
+        Subscription.create(user_id: current_user.id,
+          plan_id: user_plan.id)
 
-      redirect_to root_path, notice: " Your subscription was set up successfully!"
+        current_user.update_attributes(stripe_id: customer.id, stripe_subscription_id: subscription.id) if customer.present? && subscription.present?
+
+        redirect_to user_dashboard_path, notice: "Your subscription was set up successfully!"
+      else
+        redirect_to user_dashboard_path, notice: "Something went wrong!!!"
+      end
     end
   end
 
-  def destroy
-  end
-
   def send_job_mail
-    # User.job_mail(current_user)
-    # mail_job = {}
-    # job_include = []
-    # not_include_job = []
-    # current_user.
-    job_data = Job.where("content  ~* ? or content  ~* ? or content ~*  ?", current_user.include_job1, current_user.include_job2, current_user.include_job3)
+    include_job = current_user.include_job1? || current_user.include_job2? || current_user.include_job3?
 
-    # mail_job = Job.where("content  ~* ?", "project manager")
-    # mail_job.merge!(Job.where('content'.include? current_user.include_job2))
-    # mail_job.merge!(Job.where('content'.include? current_user.include_job3))
+    not_include_job = current_user.not_include_job1? || current_user.not_include_job2? || current_user.not_include_job3?
 
-    JobMailer.job_email(current_user, job_data).deliver_now
-    flash[:alert] = "Email Sent Succesfully"
-    redirect_to root_path
+    if include_job || not_include_job
+      job_data = Job.where("title = ? OR title = ? OR title = ?", current_user.include_job1, current_user.include_job2, current_user.include_job3).where.not("title = ? OR title = ? OR title = ?", current_user.not_include_job1, current_user.not_include_job2, current_user.not_include_job3)
+    else
+      job_data = Job.all
+    end
+
+    JobMailer.job_email(current_user, job_data).deliver_now if job_data.present?
+
+    if job_data.present?
+      redirect_to user_dashboard_path, notice: "Email Sent Succesfully!!!"
+    else
+      redirect_to user_dashboard_path, notice: "No job found!!!"
+    end
   end
 
-  def subscription_dashboard
+  def cancel_subscription
+    Stripe.api_key = ENV['stripe_secret_key']
+    if current_user.stripe_id? && current_user.stripe_subscription_id?
+      customer = Stripe::Customer.retrieve(current_user.stripe_id)
 
+      stripe_subscription = customer.subscriptions.retrieve(current_user.stripe_subscription_id) if customer.present?
+      stripe_subscription.delete
+
+      subscription = current_user.subscription
+      subscription.destroy if subscription.present?
+
+      current_user.update_attributes(stripe_subscription_id: nil, stripe_id: nil)
+      redirect_to user_dashboard_path, notice: " Your subscription deleted successfully!"
+    else
+      redirect_to user_dashboard_path, notice: "Something went wrong!!!"
+    end
   end
 
   private

@@ -1,4 +1,13 @@
 class RegistrationsController < Devise::RegistrationsController
+  after_action :create_job_search, only: [:create]
+
+  def create_job_search
+    user = User.find_by(email: params[:user][:email])
+    if user.present?
+      JobSearch.create(user_id: user.id, website_url: 'https://www.karriere.at', designation: 'project-manager', location: 'wien', job_search_type: 'static')
+      JobSearch.create(user_id: user.id, website_url: 'https://jobs.derstandard.at', designation: 'project-manager', location: 'wien', job_search_type: 'dynamic')
+    end
+  end
 
   def create
     if params[:user].present?
@@ -10,13 +19,13 @@ class RegistrationsController < Devise::RegistrationsController
         answer = Answer.create(answer: params[:answer].downcase)
         user_question.last.answer = answer
         session[:user_id] = user.id
-        flash[:alert] = "Succesfully Signed in"
+        flash[:notice] = "Signup in successfully."
         redirect_to root_path
       end
     end
   end
 
-  def update
+  def update_user_details
     if params[:security_question].present?
       sq = SecurityQuestion.find_by(question: params[:security_question])
       if current_user.security_questions.pluck(:question).include? sq.question
@@ -31,22 +40,25 @@ class RegistrationsController < Devise::RegistrationsController
             current_user.not_include_job2 = params[:not_include_job2]
             current_user.not_include_job3 = params[:not_include_job3]
             if current_user.update(user_params)
-               flash[:alert] = "User Succesfully updated"
-               redirect_to root_path
+              flash[:notice] = "User details succesfully updated!!!"
+              redirect_to user_dashboard_path
             else
-               redirect_to edit_user_registration_path
+              redirect_to edit_user_registration_path
             end
           else
-            flash[:danger] = "Answer does not match"
+            flash[:alert] = "Answer does not match!!!"
             redirect_to edit_user_registration_path
           end
         else
-          flash[:alert] = "Please enter the answer"
+          flash[:alert] = "Please enter the answer!!!"
           redirect_to edit_user_registration_path
         end
+      else
+        flash[:alert] = "Please select your security question!!!"
+        redirect_to edit_user_registration_path
       end
     else
-      flash[:danger] = "Please select the security question"
+      flash[:alert] = "Please select the security question!!!"
       redirect_to edit_user_registration_path
     end
   end
@@ -55,10 +67,7 @@ class RegistrationsController < Devise::RegistrationsController
   private
 
   def user_params
-    params.require(:user).permit(:email, :password, :password_confirmation, :gender,:first_name, :last_name,
-                                  :include_job1, :include_job2, :include_job3, :not_include_job1, :not_include_job2,
-                                  :not_include_job3
-                                )
+    params.require(:user).permit(:email, :password, :password_confirmation, :gender,:first_name, :last_name, :include_job1, :include_job2, :include_job3, :not_include_job1, :not_include_job2, :not_include_job3)
   end
 
 end

@@ -1,0 +1,51 @@
+<% if @jobs.present? %>
+  <h1>You have following jobs</h1>
+<% else %>
+  <h1>No jobs found!!!</h1>
+<% end %>
+<div class= "karri" >
+  <table style="width:100%">
+    <tr>
+      <th>Title</th>
+      <th>Company</th>
+      <th>Location</th>
+      <th>Url</th>
+      <th>Date</th>
+      <th>Content</th>
+    </tr>
+    <% if @jobs.present? %>
+      <% @jobs.each do |job| %>
+        <tr>
+          <td><%= job.title %></td>
+          <td><%= job.company %></td>
+          <td><%= job.location %></td>
+          <td><%= job.url %></td>
+          <td><%= job.date.strftime('%d.%m.%y') %></td>
+          <td><%= job.content.truncate(100) %></td>
+        </tr>
+      <% end %>
+    <% end %>
+  </table>
+</div>
+
+<% if @jobs.present? %>
+  <div class = "digg_pagination" >
+    <%= will_paginate @jobs %>
+  </div>
+<% end %>
+
+<style>
+  th {
+    background-color:green;
+    color:white;
+  }
+  th, td {
+    width:250px;
+    text-align:center;
+    border:1px solid black;
+    padding:10px
+  }
+  .karri{
+    padding-top: 10px;
+  }
+</style>

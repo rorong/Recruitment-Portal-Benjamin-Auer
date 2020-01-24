@@ -3,9 +3,6 @@ class ScraperService
   require 'nokogiri'
   require 'open-uri'
 
-
-
-
   # attr_accessor :parse_page
   class << self
     def scrap_job
@@ -41,7 +38,7 @@ class ScraperService
                       date: data.css('div.m-jobsListItem__meta').css('div.m-jobsListItem__wrap').css('span.m-jobsListItem__date')[0].text.gsub("am","").strip,
                       content: job_content.strip
                     }
-            job_already_present job_hash
+            job_hash = job_already_present job_hash
             jobs << job_hash
           end
           page += 1

@@ -1,55 +1,202 @@
-<script language="Javascript">
-	// Stripe.setPublishableKey("<%#= ENV['STRIPE_PUBLISHABLE_KEY'] %>");
-	Stripe.setPublishableKey("pk_test_0NWEnEQvnIwHqZ5wcbD5zJCY");
-</script>
-<div class="form-group col-md-12">
-  <div class="container">
-    <div id="flash-messages"></div>
-     <div class="panel-heading display-table" >
-        <div class="row display-tr" >
-          <h3 class="panel-title display-td">Payment Details</h3>
-            <div class="display-td" >
-              <img class="img-responsive pull-right" src="http://i76.imgup.net/accepted_c22e0.png">
+<div class="container text_center">
+  <div class="row">
+    <div class="col-xs-12 col-md-4">
+      <div class="panel panel-default">
+        <div class="panel-body text_center">
+          <%= form_tag '#', id: 'stripe-form', class: "paymnt_form" do |p| %>
+            <%= hidden_field_tag :email, current_user.email %>
+            <%= hidden_field_tag :plan_id,  params[:plan_is] %>
+            <div class="payment_col">
+
+              <div class="panel-heading">
+                <h3 class="panel-title">
+                  Payment Details
+                </h3>
+              </div>
+
+              <ul>
+                <i class="fa fa-cc-visa" style="color:navy;"></i>
+                <i class="fa fa-cc-amex" style="color:blue;"></i>
+                <i class="fa fa-cc-mastercard" style="color:red;"></i>
+                <i class="fa fa-cc-discover" style="color:orange;"></i>
+              </ul>
+
+              <div class="payment-errors"></div>
+
+              <div class="form-group">
+                <label for="cardNumber">CARD NUMBER</label>
+                <div class="input-group">
+                  <div id="card-number" class="form-control"></div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-xs-7 col-md-5">
+                  <div class="form-group">
+                    <label for="expityMonth">EXPIRY DATE</label>
+                    <div id="card-expiry" class="payment_expiry pyt_mrgtp"></div>
+                  </div>
+                </div>
+                <div class="col-xs-5 col-md-5 pull-right">
+                  <div class="form-group">
+                    <label for="cvCode">CVC CODE</label>
+                    <div id="card-cvc" class="payment_expiry pyt_mrgtp"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div id="card-errors" role="alert"></div>
+
+              <button id="card-button" class="btn btn-success btn-lg btn-block">Start Subscription</button>
             </div>
-        </div>
-    </div>
-    <%= form_for(Payment.new, url: subscriptions_path, html: {class: "cc_form"}) do |p| %>
-      <div class="row col-md-12 d_flex">
-        <div class="form-group col-md-4 no-left-padding ">
-          <%= p.label :card_number, "Card Number", data: { stripe: 'label'} %>
-          <%= p.text_field :card_number, class: "form-control", required: true, data: { stripe: 'number'} , onkeypress: "return isNumberKey(event)"%>
-        </div>
-        <div class="form-group col-md-2">
-          <%= p.label :card_cvv, "Card CVV", data: { stripe: 'label'} %>
-          <%= p.text_field :card_cvv, class: "form-control wdth300", required: true, data: { stripe: 'cvv'}, onkeypress: "return isNumberKey(event)" %>
-        </div>
-        <div class="form-group col-md-6">
-          <div class="col-md-12 padd0">
-            <%= p.label :card_expires, "Card Expires", data: { stripe: 'label'} %>
-            <%= p.hidden_field :paln_id, value: params[:plan_is] %>
-          </div>
-          <div class="col-md-3 padd0 wdth300">
-            <%= p.select :card_expires_month, options_for_select(Payment.month_options),
-            { include_blank: 'Month' },"data-stripe" => "exp-month",class: "form-control wdth300", required: true %>
-          </div><br>
-          <div class="col-md-3 padd0 wdth300">
-            <%= p.select :card_expires_year, options_for_select(Payment.year_options.push),{ include_blank: 'Year' },class: "form-control wdth300",data: { stripe: "exp-year" }, required: true %>
-          </div>
+          <% end %>
         </div>
       </div>
-       <button class="button is-fullwidth is-link mt4 btn btn-success">Start Subscription</button>
-    <% end %>
+    </div>
   </div>
 </div>
 
+
 <script>
-  function isNumberKey(evt){
-    var charCode = (evt.which) ? evt.which : event.keyCode
-    if(charCode > 31 && (charCode < 48 || charCode > 57)){
-      return false
-    }
-    else{
-      return true
-    }
-  };
+  $(document).on('turbolinks:load', function(){
+
+    Stripe.setPublishableKey("pk_test_0NWEnEQvnIwHqZ5wcbD5zJCY");
+
+    var stripe = Stripe("<%= ENV['stripe_publishable_key'] %>");
+
+    var elements = stripe.elements();
+    var cardElement = elements.create('cardNumber');
+    cardElement.mount('#card-number');
+
+    var cardElement = elements.create('cardExpiry');
+    cardElement.mount('#card-expiry');
+
+    var cardElement = elements.create('cardCvc');
+    cardElement.mount('#card-cvc');
+
+    var cardholderEmail = "<%= current_user.email %>";
+    var cardButton = document.getElementById('card-button');
+    var email = $('#email').val();
+    var plan_id = $('#plan_id').val();
+
+    var $form = $('#stripe-form')
+    cardButton.addEventListener('click', function(ev) {
+      $('.payment-errors').html("");
+      $('.payment-errors').removeClass('error');
+
+      stripe.createPaymentMethod({
+        type: 'card',
+        card: cardElement,
+        billing_details: {
+          email: email,
+        },
+      }
+      ).then(function(result) {
+        if (result.error) {
+          $('.payment-errors').addClass('error');
+          $('.payment-errors').html(result.error.message);
+          $("#pirkx-loader").addClass('loader_dis_none')
+        } else {
+          if (result.paymentMethod.object == "payment_method"){
+            $.ajax({
+              method: "POST",
+              beforeSend: function(xhr) {xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))},
+              url: "/subscriptions",
+              data: {payment_method_id: result.paymentMethod.id, plan_id: plan_id},
+              success: function (data, status) {
+              },
+              error: function (status, err) {
+                console.log("error", err)
+                window.location.href='/dashboard'
+              }
+            });
+          }
+        }
+      });
+      // Prevent the form from submitting with the default action
+      return false;
+    });
+  })
 </script>
+
+<style type="text/css">
+
+  .payment_col {
+    width: 100%;
+    box-shadow: 0 0 8px #ccc;
+    padding: 15px 20px;
+    max-width: 469px;
+    margin: 41px auto;
+    display: table;
+    text-align: center;
+    border-radius: 4px;
+    ul li {
+      display: inline-block;
+      i {
+        font-size: 29px;
+      }
+    }
+  }
+
+  .crd_number {
+    position: relative;
+    i {
+      position: absolute;
+      top: 11px;
+      left: 9px;
+      font-size: 19px;
+    }
+    input {
+      box-shadow: none;
+      padding: 4px 8px 4px 43px;
+      height: 40px;
+    }
+  }
+
+  .crd_deatil {
+    width: 100%;
+    float: left;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 15px 0;
+    input {
+      box-shadow: none;
+      width: 32%;
+    }
+  }
+
+  .account.mg0 {
+    margin: 0;
+    form {
+      margin: 15px auto;
+    }
+  }
+
+  .form_row.mg_top15 {
+    margin-top: 15px;
+  }
+
+  .payment_col span {
+    font-size: 12px;
+  }
+
+
+  .payment_form .form-control{
+    padding: 0.75rem 0.75rem;
+  }
+
+  .payment_expiry{
+      padding: 0.75rem 0.75rem;
+      border: 1px solid rgba(0, 0, 0, 0.15);
+      border-radius: 0.25rem;
+
+  }
+  .pyt_mrgtp{
+    margin-top:10px;
+  }
+  .bdr_rds{
+    border-radius: 79px!important;
+  }
+
+</style>

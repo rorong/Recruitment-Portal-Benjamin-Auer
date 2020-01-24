@@ -1,6 +1,5 @@
 <h1> Plans</h1>
 
-
 <table style="width:100%">
   <tr>
     <th>Plan Name</th>
@@ -13,7 +12,7 @@
 	    <td><%= plan['nickname'] %></td>
 	    <td><%= plan['amount']%></td>
       <td><%= plan['currency']%></td>
-	    <td><%= link_to 'Pay', payment_form_path(plan_is: plan['id']), class: "stripe-button" %></td>
+	    <td><%= link_to 'Pay', payment_form_path(plan_is: plan['id']), class: "stripe-button btn btn-success" %></td>
 	  </tr>
 	 <% end %>
 </table>
