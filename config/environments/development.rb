@@ -59,6 +59,7 @@ Rails.application.configure do
   logger.formatter = config.log_formatter
   config.logger    = ActiveSupport::TaggedLogging.new(logger)
 
+  config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
                                         :address=> "smtp.gmail.com",
                                         :port=> 587,
@@ -68,6 +69,8 @@ Rails.application.configure do
                                         :enable_starttls_auto => true
                                      }
 
+  config.action_mailer.asset_host = 'https://boiling-wildwood-13409.herokuapp.com'
+  config.action_mailer.default_url_options = { host: 'https://boiling-wildwood-13409.herokuapp.com' }
   # The second option is to clear the entire whitelist, which lets through requests for all hostnames.
   config.hosts.clear
 end
