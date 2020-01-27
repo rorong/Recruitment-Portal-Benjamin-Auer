@@ -67,4 +67,7 @@ Rails.application.configure do
                                         :authentication => "plain",
                                         :enable_starttls_auto => true
                                      }
+
+  # The second option is to clear the entire whitelist, which lets through requests for all hostnames.
+  config.hosts.clear
 end
