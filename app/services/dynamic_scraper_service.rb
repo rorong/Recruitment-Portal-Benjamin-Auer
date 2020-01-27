@@ -75,6 +75,8 @@ class DynamicScraperService
                             parse_job_url.css('.job-box').text
                           elsif parse_job_url.css('.content>ul>li').text.present?
                             parse_job_url.css('.content>ul>li').text
+                          elsif parse_job_url.css('#content-main').css('.content-container-inserat').css('.js-embed-container').css('#jobAd').text.present?
+                            parse_job_url.css('#content-main').css('.content-container-inserat').css('.js-embed-container').css('#jobAd').text.delete!("\n").strip
                           elsif parse_job_url.css('#content-main').css('.content-container-inserat').css('.js-embed-container').text.present?
                             c = parse_job_url.css('#content-main').css('.content-container-inserat').css('.js-embed-container').text.delete!("\n").strip
                             coder = HTMLEntities.new
@@ -88,7 +90,9 @@ class DynamicScraperService
                                     elsif content.css('.jobAd').text.present?
                                       content.css('.jobAd').text.strip
                                     elsif content.css('#ISGAd').text.present?
-                                      content.css('.jobAd').text.strip
+                                      content.css('#ISGAd').text.strip
+                                    elsif content.css('#jobAd').text.present?
+                                      content.css('#jobAd').text.strip
                                     else
                                     end
                           elsif browser.iframe(:id, "iframe1").text.present?
