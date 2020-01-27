@@ -1,3 +1,7 @@
+<div class="loader-col loader_dis_none" id="pirkx-loader">
+  <%= image_tag 'loader_1.svg' %>
+  <span class="loader-text">Please wait patiently, your payment is being processed please do not press the back button or refresh the page</span>
+</div>
 <div class="container text_center">
   <div class="row">
     <div class="col-xs-12 col-md-4">
@@ -83,7 +87,7 @@
     cardButton.addEventListener('click', function(ev) {
       $('.payment-errors').html("");
       $('.payment-errors').removeClass('error');
-
+      $("#pirkx-loader").removeClass('loader_dis_none')
       stripe.createPaymentMethod({
         type: 'card',
         card: cardElement,
@@ -120,6 +124,34 @@
 </script>
 
 <style type="text/css">
+
+  .loader_dis_none{
+    display: none;
+  }
+
+  .loader-col{    width: 100%;
+    position: fixed;
+    background: rgba(0,0,0,.9);
+    height: 100%;
+    z-index: 99;
+    text-align: center;
+        top: 0;
+    left: 0;
+    right: 0;
+  }
+  .loader-col img{position: absolute;
+    left: 50%;
+    width: 70px;
+    top: 50%;
+    margin-top: -35px;
+    margin-left: -35px;}
+  .loader-text{    color: #fff;
+  position: absolute;
+  top: 50%;
+  margin-top: 30px;
+  left: 0;
+  width: 100%;
+  text-align: center;}
 
   .payment_col {
     width: 100%;

@@ -76,13 +76,15 @@
                 <th>Select Plan</th>
               </tr>
               <% plan_list = list_all_plan %>
-              <% plan_list.each do |plan| %>
-                <tr>
-                  <td><%= plan['nickname'] %></td>
-                  <td><%= plan['amount']%></td>
-                  <td><%= plan['currency']%></td>
-                  <td><%= link_to 'Pay', payment_form_path(plan_is: plan['id']), class: "stripe-button btn btn-success" %></td>
-                </tr>
+              <% plan_list.each do |plan_list| %>
+                <% if plan_list['nickname'] != plan['nickname']%>
+                  <tr>
+                    <td><%= plan_list['nickname'] %></td>
+                    <td><%= plan_list['amount']%></td>
+                    <td><%= plan_list['currency']%></td>
+                    <td><%= link_to 'Pay', payment_form_path(plan_is: plan['id']), class: "stripe-button btn btn-success" %></td>
+                  </tr>
+                <% end %>
               <% end %>
             </table>
           </div>
