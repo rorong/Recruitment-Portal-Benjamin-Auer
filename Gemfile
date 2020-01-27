@@ -49,7 +49,7 @@ gem 'selenium-webdriver'
 gem 'webdrivers', '~> 3.0'
 gem 'stripe', '~> 3.3', '>= 3.3.1'
 gem 'figaro'
-gem 'sidekiq'
+gem 'sidekiq', '5.2.7'
 gem 'headless'
 
 
