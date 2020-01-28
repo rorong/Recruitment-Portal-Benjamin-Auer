@@ -83,18 +83,11 @@ class DynamicScraperService
                             cnt = Nokogiri::HTML(coder.decode(c))
                             coder = HTMLEntities.new
                             content = Nokogiri::HTML(coder.decode(cnt.to_html))
-                            text =  if content.css('.content').text.present?
-                                      content.css('.content').text.strip
-                                    elsif content.css('.ja-wrap').text.present?
-                                      content.css('.ja-wrap').text.strip
-                                    elsif content.css('.jobAd').text.present?
-                                      content.css('.jobAd').text.strip
-                                    elsif content.css('#ISGAd').text.present?
-                                      content.css('#ISGAd').text.strip
-                                    elsif content.css('#jobAd').text.present?
-                                      content.css('#jobAd').text.strip
-                                    else
-                                    end
+                            html = content.to_html
+                            doc = Nokogiri::HTML(html)
+                            doc.xpath('//style').remove
+                            doc.xpath('//img').remove
+                            doc.text.delete!("\n")
                           elsif browser.iframe(:id, "iframe1").text.present?
                             browser.iframe(:id, "iframe1").text
                           else
