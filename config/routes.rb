@@ -2,10 +2,21 @@ Rails.application.routes.draw do
   require 'sidekiq/web'
   mount Sidekiq::Web => '/sidekiq'
   root to: 'dashboards#index'
+
   resources :dashboards do
     member do
       get :find_job_detail
     end
+  end
+
+  namespace :admins do
+    resources :users
+    get '/plan' => 'users#existing_plan', as: :plan
+    get '/new_plan' => 'users#new_plan', as: :new_plan
+    post '/create_plan' => 'users#create_plan', as: :create_plan
+    get '/edit_plan' => 'users#edit_plan', as: :edit_plan
+    put '/update_plan' => 'users#update_plan', as: :update_plan
+    delete '/delete_plan' => 'users#delete_plan', as: :delete_plan
   end
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
   get 'dashboard' => 'dashboards#dashboard', as: 'user_dashboard'
@@ -15,6 +26,8 @@ Rails.application.routes.draw do
   get 'destroy_job_detail', to: 'dashboards#destroy_job_detail'
   get 'display_karriere', to: 'dashboards#display_karriere'
   get 'display_derstandard', to: 'dashboards#display_derstandard'
+
+  devise_for :admins, path: 'admin', controllers: { sessions: "admins/sessions", registrations: 'admins/registrations' }
 
   devise_for :users, controllers: { registrations: 'registrations' }
 

@@ -16,7 +16,7 @@
             <td><%= job.title %></td>
             <td><%= job.company %></td>
             <td><%= job.location %></td>
-            <td><%= job.url %></td>
+            <td><%= link_to "#{job.url}", "#{job.url}", target: '_blank' %></td>
             <td><%= job.date.strftime('%d.%m.%y') rescue nil %></td>
             <td><%= job.content.truncate(100) rescue nil %></td>
           </tr>

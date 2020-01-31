@@ -1,0 +1,67 @@
+<%= render 'horizontal_sidebar' %>
+<div id="layoutSidenav">
+  <%= render 'vertical_sidebar' %>
+  <div id="layoutSidenav_content">
+    <main>
+      <div class="container-fluid">
+        <h1 class="mt-4">Dashboard</h1>
+        <ol class="breadcrumb mb-4">
+          <li class="breadcrumb-item active">Dashboard</li>
+        </ol>
+        <% if @user.present? %>
+          <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+            <thead>
+              <tr>
+                <th colspan="2">User Details</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Id</td>
+                <td><%= @user.id %></td>
+              </tr>
+              <tr>
+                <td>First Name</td>
+                <td><%= @user.first_name %></td>
+              </tr>
+              <tr>
+                <td>Last Name</td>
+                <td><%= @user.last_name %></td>
+              </tr>
+              <tr>
+                <td>Email</td>
+                <td><%= @user.email %></td>
+              </tr>
+              <tr>
+                <td>include_job1</td>
+                <td><%= @user.include_job1 %></td>
+              </tr>
+              <tr>
+                <td>include_job2</td>
+                <td><%= @user.include_job2 %></td>
+              </tr>
+              <tr>
+                <td>include_job3</td>
+                <td><%= @user.include_job3 %></td>
+              </tr>
+              <tr>
+                <td>not_include_job1</td>
+                <td><%= @user.not_include_job1 %></td>
+              </tr>
+              <tr>
+                <td>not_include_job2</td>
+                <td><%= @user.not_include_job2 %></td>
+              </tr>
+              <tr>
+                <td>not_include_job3</td>
+                <td><%= @user.not_include_job3 %></td>
+              </tr>
+            </tbody>
+          </table>
+        <% else %>
+          <h1>No user found!!!</h1>
+        <% end %>
+        <%= link_to 'Back', admins_users_path %>
+    </main>
+  </div>
+</div>

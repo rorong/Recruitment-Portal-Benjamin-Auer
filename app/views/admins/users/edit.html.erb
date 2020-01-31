@@ -1,0 +1,114 @@
+<%= render 'horizontal_sidebar'%>
+<div id="layoutSidenav">
+  <%= render 'vertical_sidebar'%>
+  <div id="layoutSidenav_content">
+    <main>
+      <div class="container-fluid">
+        <h1 class="mt-4">Dashboard</h1>
+        <ol class="breadcrumb mb-4">
+          <li class="breadcrumb-item active">Dashboard</li>
+        </ol>
+        <div class="jumbotron ">
+          <h2>Edit User</h2>
+          <%= form_for(@user, url: admins_user_path(@user), html: { method: :put }) do |f| %>
+            <%#= render "devise/shared/error_messages", resource: resource %>
+            <div class="form-group">
+              <%= f.label :email %><br />
+              <%= f.email_field :email, autofocus: true, autocomplete: "email",class: "form-control", placeholder: "Enter email" %>
+            </div>
+            <div class="form-group">
+              <%= f.label :first_name %><br />
+              <%= f.text_field :first_name,class: "form-control", placeholder: "Enter First Name" %>
+            </div>
+            <div class="form-group">
+              <%= f.label :last_name %><br />
+              <%= f.text_field :last_name,class: "form-control", placeholder: "Enter Last Name" %>
+            </div>
+            <div class="form-group">
+              <%= f.label :gender %><br />
+              <%= select_tag "gender", options_for_select(['M','F']), {name: "gender", class:'custom-select'} %>
+            </div>
+            <!-- <%# if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
+              <div>Currently waiting confirmation for: <%#= resource.unconfirmed_email %></div>
+            <%# end %> -->
+            <div class="form-group">
+              <%= f.label :password %> <i>(leave blank if you don't want to change it)</i><br />
+              <%= f.password_field :password, autocomplete: "new-password",class: "form-control", placeholder: "Password" %>
+              <% if @minimum_password_length %>
+                <br />
+                <em><%= @minimum_password_length %> characters minimum</em>
+              <% end %>
+            </div>
+            <div class="form-group">
+              <%= f.label :password_confirmation %><br />
+              <%= f.password_field :password_confirmation, autocomplete: "new-password",class: "form-control", placeholder: "Password" %>
+            </div>
+            <div class="form-group">
+              <%= f.label :security_question %>
+              <%= select_tag "security_question", options_for_select(SecurityQuestion.pluck(:question)),{name: "security_question", class:'custom-select'} %>
+            </div>
+            <div class="form-group">
+              <%= f.label :security_answer %>
+              <%= text_field_tag :answer, "", class: 'form-control' %>
+            </div>
+            <div class="form-group col-md-12">
+              <div class="row">
+                <div class="col-md-6">
+                  <%= f.label :include_job %>
+                  <%= text_field_tag :include_job1, "#{f.object.include_job1}", class: 'form-control' %>
+                  <%= text_field_tag :include_job2, "#{f.object.include_job2}", class: 'form-control' %>
+                  <%= text_field_tag :include_job3, "#{f.object.include_job3}", class: 'form-control' %>
+                </div>
+                <div class="col-md-6">
+                  <%= f.label :dont_include_job %>
+                  <%= text_field_tag :not_include_job1, "#{f.object.not_include_job1}", class: 'form-control' %>
+                  <%= text_field_tag :not_include_job2, "#{f.object.not_include_job2}", class: 'form-control' %>
+                  <%= text_field_tag :not_include_job3, "#{f.object.not_include_job3}", class: 'form-control' %>
+                </div>
+              </div>
+            </div>
+            <% if @user.stripe_id.present? %>
+              <% plan = get_plan_detail %>
+              <div class="form-group col-md-12">
+                <div class="row">
+                  <div class="col-md-6">
+                    <h2>Package Information</h2>
+                    Type:<%= plan['nickname'] %><br>
+                    Price:<%= plan['amount'] %>
+                  </div>
+                  <div class="col-md-6">
+                    <h2>Change Package</h2>
+                    <table style="width:100%">
+                      <tr>
+                        <th>Plan Name</th>
+                        <th>Amount</th>
+                        <th>Currency</th>
+                        <th>Select Plan</th>
+                      </tr>
+                      <% plan_list = list_all_plan %>
+                      <% plan_list.each do |plan_list| %>
+                        <% if plan_list['nickname'] != plan['nickname']%>
+                          <tr>
+                            <td><%= plan_list['nickname'] %></td>
+                            <td><%= plan_list['amount']%></td>
+                            <td><%= plan_list['currency']%></td>
+                            <td><%= link_to 'Pay', payment_form_path(plan_is: plan['id']), class: "stripe-button btn btn-success" %></td>
+                          </tr>
+                        <% end %>
+                      <% end %>
+                    </table>
+                  </div>
+                  <%= link_to 'Unsubscribe', cancel_subscription_path, class: 'btn btn-danger', confirm: 'Are you sure you want to Unsubscribe from this plan?' %>
+                </div>
+              </div>
+            <%end %>
+            <div class="form-group">
+              <%= f.submit "Update", class: "btn btn-success" %>
+            </div>
+          <% end %>
+          <%= link_to "Back", admins_users_path, class: "btn btn-primary" %>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>

@@ -1,0 +1,16 @@
+<div id="layoutSidenav_nav">
+  <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
+    <div class="sb-sidenav-menu">
+      <div class="nav">
+        <div class="sb-sidenav-menu-heading">Core</div>
+        <%= link_to 'Dashboard', admins_users_path, class: "nav-link" %>
+        <div class="sb-sidenav-menu-heading">Interface</div>
+        <%= link_to 'Create User', new_admins_user_path, class: 'nav-link'%><%= link_to 'Plan', admins_plan_path, class: 'nav-link' %>
+      </div>
+    </div>
+    <div class="sb-sidenav-footer">
+      <div class="small">Logged in as:</div>
+      <%= current_admin.email %>
+    </div>
+  </nav>
+</div>

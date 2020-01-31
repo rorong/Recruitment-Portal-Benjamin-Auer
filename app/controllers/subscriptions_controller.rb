@@ -41,8 +41,8 @@ class SubscriptionsController < ApplicationController
         user_plan = Plan.create(stripe_id: params[:plan_id],
           name: plan['nickname'], display_price: plan['amount'])
 
-        Subscription.create(user_id: current_user.id,
-          plan_id: user_plan.id)
+        Subscription.create(stripe_id: subscription.id, user_id: current_user.id,
+          plan_id: user_plan.id) if subscription.present? && user_plan.present?
 
         current_user.update_attributes(stripe_id: customer.id, stripe_subscription_id: subscription.id) if customer.present? && subscription.present?
 
@@ -79,10 +79,14 @@ class SubscriptionsController < ApplicationController
       customer = Stripe::Customer.retrieve(current_user.stripe_id)
 
       stripe_subscription = customer.subscriptions.retrieve(current_user.stripe_subscription_id) if customer.present?
+
+      subscription = Subscription.find_by(stripe_id: stripe_subscription.id) if stripe_subscription.present?
+
+      subscription.update_attributes(stripe_id: nil) if subscription.present?
       stripe_subscription.delete
 
-      subscription = current_user.subscription
-      subscription.destroy if subscription.present?
+      # subscription = current_user.subscription
+      # subscription.destroy if subscription.present?
 
       current_user.update_attributes(stripe_subscription_id: nil, stripe_id: nil)
       redirect_to user_dashboard_path, notice: " Your subscription deleted successfully!"

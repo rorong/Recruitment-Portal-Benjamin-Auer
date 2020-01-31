@@ -10,6 +10,7 @@ class User < ApplicationRecord
   has_one  :plan, through: :subscription
 
   has_one :payment
+  belongs_to :admin, optional: true
 
 
   #validates :first_name, :last_name, presence: true

@@ -9,16 +9,19 @@
     <%= javascript_include_tag "https://js.stripe.com/v2/" %>
     <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
     <script src="https://js.stripe.com/v3/"></script>
+    <% if current_admin.present? %>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/js/all.min.js" crossorigin="anonymous"></script>
+    <% end %>
   </head>
     <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
-    <body>
-      <% unless user_signed_in? %>
+    <body class= "<%= admin_signed_in? ? 'sb-nav-fixed' : ''%>">
+      <% unless user_signed_in? || admin_signed_in? %>
         <%= render 'layouts/without_login_header'%>
       <% else %>
         <%= render 'layouts/header_after_login'%>
       <% end %>
       <section class="login_wrapper">
-        <div class="container">
+        <div class= "<%= admin_signed_in? ? '' : 'container'%>">
 
           <% if notice %>
             <p class="alert alert-success"><%= notice %><button type="button" class="close" data-dismiss="alert">&times;</button></p>

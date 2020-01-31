@@ -102,6 +102,7 @@ class DynamicScraperService
                         date: get_date,
                         content: job_content
                        }
+              job_hash = job_already_present job_hash
               jobs << job_hash
            end
             page += 1
@@ -131,6 +132,15 @@ class DynamicScraperService
     #     parse_job_url.css('#content-main').css('.content-container-inserat').css('#job-eblinger').text
     #   end
     # end
+
+    def job_already_present job_hash
+      result = Job.pluck(:url).include? job_hash[:url]
+      if result
+        job_hash = {}
+      else
+        job_hash
+      end
+    end
 
     def self.find_date get_date
       d, m, y = get_date[3].strip.split '.' if get_date[3]

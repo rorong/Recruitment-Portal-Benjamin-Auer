@@ -30,3 +30,36 @@
 SecurityQuestion.create(question: "What is your place of birth?")
 SecurityQuestion.create(question: "What is your first school?")
 SecurityQuestion.create(question: "What is your mother's side maiden name?")
+
+Stripe.api_key = ENV['stripe_secret_key']
+
+product = Stripe::Product.create({
+            name: 'JobScrapperProduct',
+            type: 'service',
+          })
+
+Stripe::Plan.create({
+  amount: 200,
+  currency: 'usd',
+  interval: 'month',
+  nickname: 'monthly',
+  product: product.id,
+})
+
+Stripe::Plan.create({
+  amount: 500,
+  currency: 'usd',
+  interval: 'month',
+  interval_count: 3,
+  nickname: 'quaterly',
+  product: product.id,
+})
+
+Stripe::Plan.create({
+  amount: 1500,
+  currency: 'usd',
+  interval: 'month',
+  interval_count: 12,
+  nickname: 'yearly',
+  product: product.id,
+})
