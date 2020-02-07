@@ -6,10 +6,12 @@
       <div class="container-fluid">
         <h1 class="mt-4">Dashboard</h1>
         <ol class="breadcrumb mb-4">
-          <li class="breadcrumb-item active">Dashboard</li>
+          <li class="breadcrumb-item active">You have following plans</li>
         </ol>
         <h1> Plans</h1>
-        <%= link_to 'Create Plan', admins_new_plan_path %>
+        <div>
+          <%= link_to 'Create Plan', admins_new_plan_path, class: "btn btn-primary" %>
+        </div><br>
         <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
           <thead>
             <tr>

@@ -5,6 +5,9 @@
     <main>
       <div class="container-fluid">
         <h1 class="mt-4">Dashboard</h1>
+        <ol class="breadcrumb mb-4">
+          <li class="breadcrumb-item active">New Plan</li>
+        </ol>
         <div class="jumbotron ">
           <h2>New Plan</h2>
           <%= form_tag(admins_create_plan_path, :method => :post, :multipart => true) do %>

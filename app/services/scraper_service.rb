@@ -3,16 +3,11 @@ class ScraperService
   require 'nokogiri'
   require 'open-uri'
 
-  # attr_accessor :parse_page
   class << self
     def scrap_job
-      # HTTParty.get("https://www.karriere.at/jobs/project-manager/wien")
       begin
-        # doc = HTTParty.get("https://www.karriere.at/jobs")
-        # doc = HTTParty.get("https://www.karriere.at/jobs/#{params[:Designation].parameterize}/#{params[:Location].downcase}")
         parse_page = Nokogiri::HTML(open("https://www.karriere.at/jobs/project-manager/wien"))
         jobs = Array.new
-        # parse_page ||= Nokogiri::HTML(doc)
         datas =  parse_page.css('div.m-jobsListItem__dataContainer') #jobs
         page = 1
         per_page = datas.count
@@ -39,7 +34,7 @@ class ScraperService
                       content: job_content.strip
                     }
             job_hash = job_already_present job_hash
-            jobs << job_hash
+            jobs << job_hash if job_hash
           end
           page += 1
         end
@@ -47,6 +42,11 @@ class ScraperService
           Job.new(attrs)
         end
         Job.import(parsed_job)
+        if parsed_job.present?
+          User.all.each do |user|
+            JobMailer.job_email(user, parsed_job).deliver_now
+          end
+        end
       rescue Exception => e
       end
     end
@@ -54,7 +54,7 @@ class ScraperService
     def job_already_present job_hash
       result = Job.pluck(:url).include? job_hash[:url]
       if result
-        job_hash = {}
+        false
       else
         job_hash
       end

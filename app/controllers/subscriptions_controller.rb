@@ -58,8 +58,10 @@ class SubscriptionsController < ApplicationController
 
     not_include_job = current_user.not_include_job1? || current_user.not_include_job2? || current_user.not_include_job3?
 
-    if include_job || not_include_job
-      job_data = Job.where("title = ? OR title = ? OR title = ?", current_user.include_job1, current_user.include_job2, current_user.include_job3).where.not("title = ? OR title = ? OR title = ?", current_user.not_include_job1, current_user.not_include_job2, current_user.not_include_job3)
+    if (include_job && !not_include_job) || (include_job && not_include_job)
+      job_data = Job.where("title = ? OR title = ? OR title = ?", current_user.include_job1, current_user.include_job2, current_user.include_job3)
+    elsif !include_job && not_include_job
+      job_data = Job.where.not("title = ? OR title = ? OR title = ?", current_user.not_include_job1, current_user.not_include_job2, current_user.not_include_job3)
     else
       job_data = Job.all
     end

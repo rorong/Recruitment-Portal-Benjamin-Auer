@@ -93,10 +93,50 @@
       </div>
     <%end %>
     <div class="form-group">
-      <%= f.submit "Update", class: "btn btn-success" %>
+      <%= f.submit "Update", id: 'edit_user_details', class: "btn btn-success" %>
     </div>
   <% end %>
   <h3>Cancel my account</h3>
   <p>Unhappy? <%= link_to "Cancel my account", registration_path(resource_name), data: { confirm: "Are you sure you want to cancel your account?" }, method: :delete, class: 'btn btn-danger' %></p>
   <%= link_to "Back", user_dashboard_path, class: "btn btn-primary" %>
 </div>
+
+
+<script>
+  $('#edit_user_details').on('click', function(){
+    var include_job1 = document.getElementById("include_job1");
+    var include_job2 = document.getElementById("include_job2");
+    var include_job3 = document.getElementById("include_job3");
+    var not_include_job1 = document.getElementById("not_include_job1");
+    var not_include_job2 = document.getElementById("not_include_job2");
+    var not_include_job3 = document.getElementById("not_include_job3");
+    var not_include_job_id1 = $("#not_include_job1")[0];
+    var not_include_job_id2 = $("#not_include_job2")[0];
+    var not_include_job_id3 = $("#not_include_job3")[0];
+
+    validate();
+    function validate(){
+      if(not_include_job1.value != "" && not_include_job1.value == include_job1.value) {
+        not_include_job_id1.setCustomValidity("Please use diffrent title");
+      } else if (not_include_job1.value != "" && not_include_job1.value == include_job2.value){
+        not_include_job_id1.setCustomValidity("Please use diffrent title");
+      } else if (not_include_job1.value != "" && not_include_job1.value == include_job3.value) {
+        not_include_job_id1.setCustomValidity("Please use diffrent title");
+      } else if (not_include_job2.value != "" && not_include_job2.value == include_job1.value) {
+        not_include_job_id2.setCustomValidity("Please use diffrent title");
+      } else if (not_include_job2.value != "" && not_include_job2.value == include_job2.value) {
+        not_include_job_id2.setCustomValidity("Please use diffrent title");
+      } else if (not_include_job2.value != "" && not_include_job2.value == include_job3.value) {
+        not_include_job_id2.setCustomValidity("Please use diffrent title");
+      } else if (not_include_job3.value != "" && not_include_job3.value == include_job1.value) {
+        not_include_job_id3.setCustomValidity("Please use diffrent title");
+      } else if (not_include_job3.value != "" && not_include_job3.value == include_job2.value) {
+        not_include_job_id3.setCustomValidity("Please use diffrent title");
+      } else if (not_include_job3.value != "" && not_include_job3.value == include_job3.value) {
+        not_include_job_id3.setCustomValidity("Please use diffrent title");
+      } else{
+        $('#edit_user').submit();
+      }
+    }
+  });
+</script>
