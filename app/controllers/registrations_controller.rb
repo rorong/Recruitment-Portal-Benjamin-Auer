@@ -40,6 +40,9 @@ class RegistrationsController < Devise::RegistrationsController
             current_user.not_include_job2 = params[:not_include_job2]
             current_user.not_include_job3 = params[:not_include_job3]
             if current_user.update(user_params)
+              Sidekiq.set_schedule(current_user.email, { cron: cron_generator( params[:package] , params[:dow] ),
+                                                          class: 'EmailWorker',queue:"mailers",args: current_user.id })
+              #cron: cron_generator( params[:package] , params[:dow] )
               flash[:notice] = "User details succesfully updated!!!"
               redirect_to user_dashboard_path
             else
@@ -68,6 +71,33 @@ class RegistrationsController < Devise::RegistrationsController
 
   def user_params
     params.require(:user).permit(:email, :password, :password_confirmation, :gender,:first_name, :last_name, :include_job1, :include_job2, :include_job3, :not_include_job1, :not_include_job2, :not_include_job3)
+  end
+
+
+  def cron_generator(package,day)
+    if (package == "Receive emails daily") 
+      day="*"
+      a="*"
+    elsif package == "Receive email once a week"
+      a="*"      
+    else
+      a="*/15"
+    end
+    "0 0 0 "+a+" * "+day.to_s
+  end
+
+  def job_id
+    include_job = current_user.include_job1? || current_user.include_job2? || current_user.include_job3?
+
+    not_include_job = current_user.not_include_job1? || current_user.not_include_job2? || current_user.not_include_job3?
+
+    if (include_job && !not_include_job) || (include_job && not_include_job)
+      job_data = Job.where("title = ? OR title = ? OR title = ?", current_user.include_job1, current_user.include_job2, current_user.include_job3)
+    elsif !include_job && not_include_job
+      job_data = Job.where.not("title = ? OR title = ? OR title = ?", current_user.not_include_job1, current_user.not_include_job2, current_user.not_include_job3)
+    else
+      job_data = Job.all
+    end
   end
 
 end

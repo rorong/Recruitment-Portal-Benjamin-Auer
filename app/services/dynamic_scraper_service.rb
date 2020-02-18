@@ -7,13 +7,13 @@ class DynamicScraperService
   require 'date'
 
   class << self
-    def dynamic_scrap
+    def dynamic_scrap(designation,location)
       begin
         jobs = Array.new
         browser = Watir::Browser.new :chrome
         browser.goto('https://jobs.derstandard.at/jobsuche')
-        browser.text_field(:id => "jobSearchListInput").set "project manager"
-        browser.text_field(:id => "regionSearchListInput").set "wien"
+        browser.text_field(:id => "jobSearchListInput").set designation
+        browser.text_field(:id => "regionSearchListInput").set location
         browser.button(:value => 'Jobs suchen').click
         sleep 5
         parse_page ||= Nokogiri::HTML(browser.html)
@@ -25,11 +25,12 @@ class DynamicScraperService
         while page <= last_page
           pagination_url = "https://jobs.derstandard.at/jobsuche/#{page}"
           browser.goto(pagination_url)
-          pagination_parse_page ||= Nokogiri::HTML(browser.html)
+          pagination_parse_page = Nokogiri::HTML(browser.html)
           pagination_datas = pagination_parse_page.css('#resultWithPagingSection>ul>li').search('.resultListItemContent')
           pagination_datas.each do |data|
             url = "jobs.derstandard.at"+ data.children.css('a')[0].attributes['href'].value
             browser.goto(url)
+            puts url
             parse_job_url ||= Nokogiri::HTML(browser.html)
             job_content = if parse_job_url.css('#content-main').css('.content').text.present?
                             parse_job_url.css('#content-main').css('.content').text

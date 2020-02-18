@@ -4,9 +4,9 @@ class ScraperService
   require 'open-uri'
 
   class << self
-    def scrap_job
+    def scrap_job(designation,location)
       begin
-        parse_page = Nokogiri::HTML(open("https://www.karriere.at/jobs/project-manager/wien"))
+        parse_page = Nokogiri::HTML(open("https://www.karriere.at/jobs/#{designation}/#{location}"))
         jobs = Array.new
         datas =  parse_page.css('div.m-jobsListItem__dataContainer') #jobs
         page = 1

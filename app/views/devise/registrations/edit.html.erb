@@ -41,6 +41,52 @@
       <%= f.label :security_answer %>
       <%= text_field_tag :answer, "", class: 'form-control' %>
     </div>
+
+    <div class="form-group">
+      <%= f.label :package %>
+      <%= select_tag "package", options_for_select(["Receive emails daily","Receive email once a week","Receive email once every two weeks"]),{name: "package", class:'custom-select'} %>
+    </div>
+
+    <div class="hidden-option" style="display: none;">
+      <style>
+        
+
+
+      </style>
+      <div class="dowPicker">
+        <label><h5>Select a day</h></label><br>
+        <div class="dowPickerOption">
+          <input name="dow" type="radio" value=0 id="dow1" checked>
+          <label for="dow1" >S</label>
+        </div>
+        <div class="dowPickerOption">
+          <input name="dow" type="radio" value=1 id="dow2">
+          <label for="dow2">M</label>
+        </div>
+        <div class="dowPickerOption">
+          <input name="dow" type="radio" value=2 id="dow3">
+          <label for="dow3">T</label>
+        </div>
+        <div class="dowPickerOption">
+          <input name="dow" type="radio" value=3 id="dow4">
+          <label for="dow4">W</label>
+        </div>
+        <div class="dowPickerOption">
+          <input name="dow" type="radio" value=4 id="dow5">
+          <label for="dow5">T</label>
+        </div>
+        <div class="dowPickerOption">
+          <input name="dow" type="radio" value=5 id="dow6">
+          <label for="dow6">F</label>
+        </div>
+        <div class="dowPickerOption">
+          <input name="dow" type="radio" value=6 id="dow7">
+          <label for="dow7">S</label>
+        </div>
+      </div> 
+    </div>
+   
+
     <div class="form-group col-md-12">
       <div class="row">
         <div class="col-md-6">

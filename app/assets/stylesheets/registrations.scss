@@ -1,3 +1,30 @@
 // Place all the styles related to the Registrations controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+.dowPicker {
+          width: 300px;
+          margin: 0 auto;
+          text-align: center;
+          padding: 0 0 0 5px;
+        
+        .dowPickerOption {
+            display: inline-block;
+          
+        h1{
+
+        }
+        input[type=radio] {
+            display: none;
+            }
+          
+        label {
+            font-size: 50px;
+            color: #A7A7A7;
+            cursor: pointer;
+            }
+        input[type=radio]:checked ~ label {
+            color: #464646;
+            font-weight: 500;
+    }
+  }
+ }

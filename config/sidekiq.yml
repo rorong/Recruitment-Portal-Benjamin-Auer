@@ -1,4 +1,5 @@
 ---
+:dynamic: true
 :concurrency: 1
 :queues:
   - default
@@ -7,9 +8,10 @@
   # auto_renewal_subscriptions:
   #   cron: '59 23 * * * *'
   #   class: SubscriptionAutoRenewal
+  
   scrap_job_worker:
     cron: '0 0 0 * * *'
     class: ScrapJobWorker
-  dynamic_scrap_worker:
-    cron: '0 0 0 * * *'
-    class: DynamicScrapWorker
+  # dynamic_scrap_worker:
+  #   cron: '0 0 0 * * *'
+  #   class: DynamicScrapWorker

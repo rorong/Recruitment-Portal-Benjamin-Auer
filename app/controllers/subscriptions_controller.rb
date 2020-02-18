@@ -65,9 +65,7 @@ class SubscriptionsController < ApplicationController
     else
       job_data = Job.all
     end
-
-    JobMailer.job_email(current_user, job_data).deliver_now if job_data.present?
-
+    
     if job_data.present?
       redirect_to user_dashboard_path, notice: "Email Sent Succesfully!!!"
     else

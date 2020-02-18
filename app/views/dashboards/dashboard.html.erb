@@ -16,120 +16,75 @@
   </div>
 <%end %>
 
-<% if @static_job_search.present? %>
+<% if @job_search.present? %>
   <div class="padding-top">
     <div class="well padding-top" style="background-color:#f2f2f2">
       <span style="font-size:3.5em;" class="glyphicon glyphicon-th-list"></span>
       <div class="form-group col-md-12">
         <div class="row">
           <div class="widt100">
-            <h3>For karriere</h3>
-            <div class="form-content-wrap">
-              <span>Website: <input class="form-control" value='<%= @static_job_search.website_url %>' disabled/></span><br>
-              <span>Designation : <input class="form-control" value='<%= @static_job_search.designation %>' disabled/></span><br>
-              <span>Location : <input class="form-control" value='<%= @static_job_search.location %>' disabled/></span><br>
-              <% if @static_job_search.present? && !@static_job_search.is_update %>
-                <button type="button" job_search_id = '<%= @static_job_search.id %>' value = "static" class="update_job_search btn btn-success" >Update</button>
+            <h3>Update</h3>
+            <div class="form-content-wrap">    
+              <center><span class="col-md-6">Designation :
+               <%#= select_tag "designation", options_for_select(@job_search.pluck(:designation).uniq),{name: "designation", class:'custom-select form-control'} %>
+              <%= text_field_tag :designation,@job_search.first.designation, class:"form-control", disabled:true%>
+               </span>
+               <!--<input class="form-control" value='<%#= @static_job_search.designation %>' disabled/></span><br>-->
+              <span class="col-md-6">Location : 
+                <%#= select_tag "location", options_for_select(@job_search.pluck(:location).uniq),{name: "location", class:'pad custom-select form-control'} %>
+                  <%= text_field_tag :location,@job_search.first.location,class:"form-control",disabled: true %>
+                </span>
+                <!--<input class="form-control" value='<%#= @static_job_search.location %>' disabled/></span><br>-->
+                <%if @job_search.any? {|job| job.is_update == false} %>
+                  <span ><button type="button" style="margin-top: 20px;" class="update_job_search btn btn-success" >Update</button></span>
+                <% end %>  
+              </center>
               </div>
-            <% end %>
           </div>
         </div>
       </div>
+                  
     </div>
   </div>
-<% end %>
+<%end%>
 
-<% if @dynamic_job_search.present? %>
-  <div class="padding-top">
-    <div class="well padding-top" style="background-color:#f2f2f2">
-      <span style="font-size:3.5em;" class="glyphicon glyphicon-th-list"></span>
-      <div class="form-group col-md-12">
-        <div class="row">
-          <div class="widt100">
-            <h3>For Derstandard</h3>
-            <div class="form-content-wrap">
-              <span>Website: <input class="form-control" value='<%= @dynamic_job_search.website_url %>' disabled/></span><br>
-              <span>Designation : <input class="form-control" value='<%= @dynamic_job_search.designation %>' disabled/></span><br>
-              <span>Location : <input class="form-control" value='<%= @dynamic_job_search.location %>' disabled/></span><br>
-              <% if @dynamic_job_search.present? && !@dynamic_job_search.is_update %>
-                <button type="button" job_search_id = '<%= @dynamic_job_search.id %>' value = "dynamic" class="update_job_search btn btn-success" >Update</button>
-              </div>
-            <% end %>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-<% end %>
-
-<% if @static_job_search.present? %>
-  <div class="modal fade" id="updateStaticJobDetailModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+<% if @job_search.present? %>
+  <div class="modal fade" id="updateJobDetailModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
     aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header text-center">
-          <h4 class="modal-title w-100 font-weight-bold">Update karriere</h4>
+          <h4 class="modal-title w-100 font-weight-bold">Update</h4>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
-        <%= form_for (@static_job_search), :url =>{:action => "update_job_detail", :id =>@static_job_search.id} do |f| %>
+        <%= form_for (@job_search.first), :url =>{:action => "update_job_detail"} do |f| %>
           <div class="modal-body mx-3">
             <%= f.hidden_field :user_id, { :value => current_user.id } %>
-            <%= f.hidden_field :job_search_type, { :value => "static" } %>
-            <fieldset disabled>
-              Website: <%= f.text_field :website_url, class: 'form-control' %><br>
-            </fieldset>
-            Designation : <%= f.text_field :designation, class: 'form-control' %><br>
-            Location : <%= f.text_field :location, class: 'form-control' %><br>
-          </div>
-          <div class="modal-footer d-flex justify-content-center">
-            <center><%= f.submit 'Update', class: 'btn btn-success' %></center>
-          </div>
-        <% end %>
-      </div>
-    </div>
-  </div>
-<% end %>
+            <%#= f.hidden_field :job_search_type, { :value => "static" } %>
+            
+              <%#= f.text_field :website_url, class: 'form-control' %><br>
 
-<% if @dynamic_job_search.present? %>
-  <div class="modal fade" id="updateDynamicJobDetailModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header text-center">
-          <h4 class="modal-title w-100 font-weight-bold">Update Derstandard</h4>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <%= form_for (@dynamic_job_search), :url =>{:action => "update_job_detail", :id => @dynamic_job_search.id} do |f| %>
-          <div class="modal-body mx-3">
-            <%= f.hidden_field :user_id, { :value => current_user.id } %>
-            <%= f.hidden_field :job_search_type, { :value => "dynamic" } %>
-            <fieldset disabled>
-              Website: <%= f.text_field :website_url, class: 'form-control' %><br>
-            </fieldset>
-            Designation : <%= f.text_field :designation, class: 'form-control' %><br>
-            Location : <%= f.text_field :location, class: 'form-control' %><br>
+              Designation : <%= f.text_field :designation, class: 'form-control'%><br>
+              Location : <%= f.text_field :location, class: 'form-control'%><br>
+           
           </div>
-          <div class="modal-footer d-flex justify-content-center">
-            <center><%= f.submit 'Update', class: 'btn btn-success' %></center>
+          <div class="row d-flex justify-content-center">
+            <%=f.submit 'Update', class: 'submit_response col-md-4 btn btn-success',style:"padding:10px 0 10px 0; font-size:25px;" %>
           </div>
         <% end %>
       </div>
     </div>
+    
   </div>
 <% end %>
 
 <script type="text/javascript">
   $(document).on('click', '.update_job_search', function(){
-    var job_search_id = $(this).attr('job_search_id');
-    var type = $(this).attr('value');
     $.ajax({
       type: 'GET',
-      url: '/dashboards/'+ job_search_id +'/find_job_detail',
-      data: {job_search_type: type}
+      url: $('#updateJobDetailModal').modal('show')
     }).done(function (response) {
     });
   })
@@ -162,6 +117,9 @@
 
   .row{
     margin: 10px;
+  }
+  .pad{
+    margin-bottom: 25px;
   }
 
   .btn-default {
