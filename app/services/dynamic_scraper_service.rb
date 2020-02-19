@@ -25,12 +25,19 @@ class DynamicScraperService
         while page <= last_page
           pagination_url = "https://jobs.derstandard.at/jobsuche/#{page}"
           browser.goto(pagination_url)
+
+          browser.text_field(:id => "jobSearchListInput").set designation
+          browser.text_field(:id => "regionSearchListInput").set location
+          browser.button(:value => 'Jobs suchen').click
+
+          pagination_url = "https://jobs.derstandard.at/jobsuche/#{page}"
+          browser.goto(pagination_url)
+
           pagination_parse_page = Nokogiri::HTML(browser.html)
           pagination_datas = pagination_parse_page.css('#resultWithPagingSection>ul>li').search('.resultListItemContent')
           pagination_datas.each do |data|
             url = "jobs.derstandard.at"+ data.children.css('a')[0].attributes['href'].value
             browser.goto(url)
-            puts url
             parse_job_url ||= Nokogiri::HTML(browser.html)
             job_content = if parse_job_url.css('#content-main').css('.content').text.present?
                             parse_job_url.css('#content-main').css('.content').text
@@ -88,8 +95,8 @@ class DynamicScraperService
             job_hash = {
                         title: data.attributes['title'].value.gsub('|',',').gsub(',',',').split(',').first.strip,
                         url: url,
-                        company: data.attributes['title'].value.gsub('|',',').gsub(',',',').split(',').third.strip,
-                        location: data.attributes['title'].value.gsub('|',',').gsub(',',',').split(',').second.strip,
+                        location: data.css('span.jobadress').text,
+                        company: data.css('span.company').text,
                         date: get_date,
                         content: job_content
                        }
@@ -112,8 +119,9 @@ class DynamicScraperService
             JobMailer.job_email(user, all_job).deliver_now
            end
         end
-      rescue Exception => e
-        puts e.message
+      rescue Exception
+        sleep(2)
+        retry
       end
     end
 

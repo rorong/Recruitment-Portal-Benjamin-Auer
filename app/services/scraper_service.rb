@@ -14,7 +14,7 @@ class ScraperService
         total = parse_page.css('div.m-pagination').css('div.m-pagination__inner').css('span.m-pagination__meta').text.split(' ')[2].to_i * per_page
         last_page = (total.to_f / per_page.to_f).round
         while page <= last_page
-          pagination_url = page > 1 ? "https://www.karriere.at/jobs/project-manager/wien?page=#{page}" : "https://www.karriere.at/jobs/project-manager/wien"
+          pagination_url = page > 1 ? "https://www.karriere.at/jobs/#{designation}/#{location}?page=#{page}" : "https://www.karriere.at/jobs/#{designation}/#{location}"
           # pagination_doc = HTTParty.get(pagination_url)
           pagination_parse_page = Nokogiri::HTML(open(pagination_url))
 
@@ -47,7 +47,9 @@ class ScraperService
             JobMailer.job_email(user, parsed_job).deliver_now
           end
         end
-      rescue Exception => e
+      rescue Exception
+        sleep(2)
+        retry
       end
     end
 
