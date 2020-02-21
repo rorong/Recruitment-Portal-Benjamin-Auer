@@ -23,6 +23,7 @@ class DynamicScraperService
         total = parse_page.css('#jobSearchMenuSection').css('.page-list-count').text.split(' ')[2].to_i * per_page
         last_page = (total.to_f / per_page.to_f).round
         while page <= last_page
+
           pagination_url = "https://jobs.derstandard.at/jobsuche/#{page}"
           browser.goto(pagination_url)
 
@@ -37,59 +38,60 @@ class DynamicScraperService
           pagination_datas = pagination_parse_page.css('#resultWithPagingSection>ul>li').search('.resultListItemContent')
           pagination_datas.each do |data|
             url = "jobs.derstandard.at"+ data.children.css('a')[0].attributes['href'].value
-            browser.goto(url)
-            parse_job_url ||= Nokogiri::HTML(browser.html)
-            job_content = if parse_job_url.css('#content-main').css('.content').text.present?
-                            parse_job_url.css('#content-main').css('.content').text
-                          elsif parse_job_url.css('#job-eblinger').text.present?
-                            parse_job_url.css('#job-eblinger').text
-                          elsif parse_job_url.css('#content-main').css('.content-container-inserat').css('.js-embed-container').css('.js-embed-output').css('.jobAd').css('.companyDescription').text.present?
-                            parse_job_url.css('#content-main').css('.content-container-inserat').css('.js-embed-container').css('.js-embed-output').css('.jobAd').css('.companyDescription').text.strip
-                          elsif parse_job_url.css('#content-main').css('.content-container-inserat').css('#job-eblinger').present?
-                             parse_job_url.css('#content-main').css('.content-container-inserat').css('#job-eblinger').text
-                          elsif parse_job_url.css('#content-main').css('.content-container-inserat').css('#job-eblinger').present?
-                            parse_job_url.css('#content-main').css('.content-container-inserat').css('#job-eblinger').text
-                          elsif parse_job_url.css('.jobAd').css('.jobAdContent').text.present?
-                            parse_job_url.css('.jobAd').css('.jobAdContent').text
-                          elsif parse_job_url.css('#jobad').css('.jobad-main-container').text.present?
-                             parse_job_url.css('#jobad').css('.jobad-main-container').text
-                          elsif parse_job_url.css('.inhalt').text.present?
-                            parse_job_url.css('.inhalt').text
-                          elsif parse_job_url.css('.abstand-aussen').text.present?
-                            parse_job_url.css('.abstand-aussen').text
-                          elsif parse_job_url.css('.jobAd').text.present?
-                            parse_job_url.css('.jobAd').text
-                          elsif parse_job_url.css('#job_content_left').text.present?
-                            parse_job_url.css('#job_content_left').text
-                          elsif parse_job_url.css('#job-ims').css('.left').text.present?
-                            parse_job_url.css('#job-ims').css('.left').text
-                          elsif parse_job_url.css('#jobAd').css('.job-body').text.present?
-                            parse_job_url.css('#jobAd').css('.job-body').text
-                          elsif parse_job_url.css('#job-lindlpower').css('.row').text.present?
-                            parse_job_url.css('#job-lindlpower').css('.row').text
-                          elsif parse_job_url.css('#job-santander').css('.job__left-column').text.present?
-                            parse_job_url.css('#job-santander').css('.job__left-column').text
-                          elsif parse_job_url.css('.job-box').text.present?
-                            parse_job_url.css('.job-box').text
-                          elsif parse_job_url.css('.content>ul>li').text.present?
-                            parse_job_url.css('.content>ul>li').text
-                          elsif parse_job_url.css('#content-main').css('.content-container-inserat').css('.js-embed-container').css('#jobAd').text.present?
-                            parse_job_url.css('#content-main').css('.content-container-inserat').css('.js-embed-container').css('#jobAd').text.delete!("\n").strip
-                          elsif parse_job_url.css('#content-main').css('.content-container-inserat').css('.js-embed-container').text.present?
-                            c = parse_job_url.css('#content-main').css('.content-container-inserat').css('.js-embed-container').text.delete!("\n").strip
-                            coder = HTMLEntities.new
-                            cnt = Nokogiri::HTML(coder.decode(c))
-                            coder = HTMLEntities.new
-                            content = Nokogiri::HTML(coder.decode(cnt.to_html))
-                            html = content.to_html
-                            doc = Nokogiri::HTML(html)
-                            doc.xpath('//style').remove
-                            doc.xpath('//img').remove
-                            doc.text.delete!("\n")
-                          elsif browser.iframe(:id, "iframe1").text.present?
-                            browser.iframe(:id, "iframe1").text
-                          else
-                          end
+            #browser.goto(url)
+
+            #parse_job_url ||= Nokogiri::HTML(browser.html)
+            # job_content = if parse_job_url.css('#content-main').css('.content').text.present?
+            #                 parse_job_url.css('#content-main').css('.content').text
+            #               elsif parse_job_url.css('#job-eblinger').text.present?
+            #                 parse_job_url.css('#job-eblinger').text
+            #               elsif parse_job_url.css('#content-main').css('.content-container-inserat').css('.js-embed-container').css('.js-embed-output').css('.jobAd').css('.companyDescription').text.present?
+            #                 parse_job_url.css('#content-main').css('.content-container-inserat').css('.js-embed-container').css('.js-embed-output').css('.jobAd').css('.companyDescription').text.strip
+            #               elsif parse_job_url.css('#content-main').css('.content-container-inserat').css('#job-eblinger').present?
+            #                  parse_job_url.css('#content-main').css('.content-container-inserat').css('#job-eblinger').text
+            #               elsif parse_job_url.css('#content-main').css('.content-container-inserat').css('#job-eblinger').present?
+            #                 parse_job_url.css('#content-main').css('.content-container-inserat').css('#job-eblinger').text
+            #               elsif parse_job_url.css('.jobAd').css('.jobAdContent').text.present?
+            #                 parse_job_url.css('.jobAd').css('.jobAdContent').text
+            #               elsif parse_job_url.css('#jobad').css('.jobad-main-container').text.present?
+            #                  parse_job_url.css('#jobad').css('.jobad-main-container').text
+            #               elsif parse_job_url.css('.inhalt').text.present?
+            #                 parse_job_url.css('.inhalt').text
+            #               elsif parse_job_url.css('.abstand-aussen').text.present?
+            #                 parse_job_url.css('.abstand-aussen').text
+            #               elsif parse_job_url.css('.jobAd').text.present?
+            #                 parse_job_url.css('.jobAd').text
+            #               elsif parse_job_url.css('#job_content_left').text.present?
+            #                 parse_job_url.css('#job_content_left').text
+            #               elsif parse_job_url.css('#job-ims').css('.left').text.present?
+            #                 parse_job_url.css('#job-ims').css('.left').text
+            #               elsif parse_job_url.css('#jobAd').css('.job-body').text.present?
+            #                 parse_job_url.css('#jobAd').css('.job-body').text
+            #               elsif parse_job_url.css('#job-lindlpower').css('.row').text.present?
+            #                 parse_job_url.css('#job-lindlpower').css('.row').text
+            #               elsif parse_job_url.css('#job-santander').css('.job__left-column').text.present?
+            #                 parse_job_url.css('#job-santander').css('.job__left-column').text
+            #               elsif parse_job_url.css('.job-box').text.present?
+            #                 parse_job_url.css('.job-box').text
+            #               elsif parse_job_url.css('.content>ul>li').text.present?
+            #                 parse_job_url.css('.content>ul>li').text
+            #               elsif parse_job_url.css('#content-main').css('.content-container-inserat').css('.js-embed-container').css('#jobAd').text.present?
+            #                 parse_job_url.css('#content-main').css('.content-container-inserat').css('.js-embed-container').css('#jobAd').text.delete!("\n").strip
+            #               elsif parse_job_url.css('#content-main').css('.content-container-inserat').css('.js-embed-container').text.present?
+            #                 c = parse_job_url.css('#content-main').css('.content-container-inserat').css('.js-embed-container').text.delete!("\n").strip
+            #                 coder = HTMLEntities.new
+            #                 cnt = Nokogiri::HTML(coder.decode(c))
+            #                 coder = HTMLEntities.new
+            #                 content = Nokogiri::HTML(coder.decode(cnt.to_html))
+            #                 html = content.to_html
+            #                 doc = Nokogiri::HTML(html)
+            #                 doc.xpath('//style').remove
+            #                 doc.xpath('//img').remove
+            #                 doc.text.delete!("\n")
+            #               elsif browser.iframe(:id, "iframe1").text.present?
+            #                 browser.iframe(:id, "iframe1").text
+            #               else
+            #               end
             get_date = find_date(data.attributes['title'].value.gsub('|',',').gsub(',',',').split(','))
 
             job_hash = {
@@ -98,7 +100,7 @@ class DynamicScraperService
                         location: data.css('span.jobadress').text,
                         company: data.css('span.company').text,
                         date: get_date,
-                        content: job_content
+                        content: data.css('p')[0].attributes['title'].value,
                        }
             job_hash = job_already_present job_hash
             jobs << job_hash if job_hash
@@ -119,9 +121,10 @@ class DynamicScraperService
             JobMailer.job_email(user, all_job).deliver_now
            end
         end
-      rescue Exception
-        sleep(2)
-        retry
+
+      rescue Exception => e
+        puts e
+
       end
     end
 

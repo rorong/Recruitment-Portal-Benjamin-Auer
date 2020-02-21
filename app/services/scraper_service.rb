@@ -13,6 +13,7 @@ class ScraperService
         per_page = datas.count
         total = parse_page.css('div.m-pagination').css('div.m-pagination__inner').css('span.m-pagination__meta').text.split(' ')[2].to_i * per_page
         last_page = (total.to_f / per_page.to_f).round
+
         while page <= last_page
           pagination_url = page > 1 ? "https://www.karriere.at/jobs/#{designation}/#{location}?page=#{page}" : "https://www.karriere.at/jobs/#{designation}/#{location}"
           # pagination_doc = HTTParty.get(pagination_url)
@@ -23,15 +24,15 @@ class ScraperService
           pagination_datas.each do |data|
             url = data.css('h2.m-jobsListItem__title').css('a')[0].attributes['href'].value
             job_url = HTTParty.get(url)
-            parse_job_url ||= Nokogiri::HTML(job_url)
-            job_content = parse_job_url.css('div.l-master__content').css('div.c-jobDetail').css('div.m-jobDetailContent').css('div.m-jobDetailContent__inner').css('div.m-jobContent').css('div.m-jobContent__jobDetail').text
+            #parse_job_url ||= Nokogiri::HTML(job_url)
+            #job_content = parse_job_url.css('div.l-master__content').css('div.c-jobDetail').css('div.m-jobDetailContent').css('div.m-jobDetailContent__inner').css('div.m-jobContent').css('div.m-jobContent__jobDetail').text
             job_hash = {
                       title: data.css('h2.m-jobsListItem__title').text.strip,
                       company: data.css('div.m-jobsListItem__meta').css('div.m-jobsListItem__company').text.strip,
                       url: data.css('h2.m-jobsListItem__title').css('a')[0].attributes['href'].value.strip,
                       location:  (data.css('div.m-jobsListItem__meta').css('div.m-jobsListItem__wrap').css('ul.m-jobsListItem__locations').css('li.m-jobsListItem__location').css('a')[0].attributes['data-location'].value.strip rescue nil),
                       date: data.css('div.m-jobsListItem__meta').css('div.m-jobsListItem__wrap').css('span.m-jobsListItem__date')[0].text.gsub("am","").strip,
-                      content: job_content.strip
+                      content: data.css('p.m-jobsListItem__snippet').text.strip
                     }
             job_hash = job_already_present job_hash
             jobs << job_hash if job_hash
@@ -47,9 +48,9 @@ class ScraperService
             JobMailer.job_email(user, parsed_job).deliver_now
           end
         end
-      rescue Exception
-        sleep(2)
-        retry
+      rescue Exception => e
+
+        puts e
       end
     end
 
