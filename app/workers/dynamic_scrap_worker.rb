@@ -4,8 +4,8 @@ class DynamicScrapWorker
   sidekiq_options queue: "default"
 
   def perform(user_id)
-  	designation=User.find(user_id).job_searches.find_by(job_search_type:"dynamic").designation
-  	location=User.find(user_id).job_searches.find_by(job_search_type:"dynamic").location
+  	designation=User.find(user_id).job_search.designation
+  	location=User.find(user_id).job_search.location
     DynamicScraperService.dynamic_scrap(designation,location)
   end
 

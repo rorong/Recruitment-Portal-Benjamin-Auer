@@ -16,7 +16,7 @@
     </div>
     <div class="form-group">
       <%= f.label :gender %><br />
-      <%= select_tag "gender", options_for_select(['M','F']),{:name => "gender"} %>
+      <%= f.select "gender", options_for_select(['M','F']),{},{class: "custom-select"} %>
     </div>
     <div class="form-group">
       <%= f.label :password %>
@@ -31,11 +31,11 @@
     </div>
     <div class="form-group">
       <%= f.label :security_question %>
-      <%= select_tag "security_question", options_for_select(SecurityQuestion.pluck(:question)),{:name => "security_question"} %>
+      <%= select_tag :security_question, options_for_select(security_questions), class:"custom-select" %>
     </div>
     <div class="form-group">
-      <%= f.label :security_answer %>
-      <%= text_field_tag :answer, "", class: 'form-control', required: true %>
+      <%= f.label :answer %>
+      <%= f.text_field :answer, class: 'form-control', required: true %>
     </div>
      <div class="form-group">
       <%= f.submit "Sign up", class: "btn btn-primary" %>
@@ -45,17 +45,33 @@
 </div>
 
 <script>
-  var password = document.getElementById("user_password");
-  var confirm_password = document.getElementById("user_password_confirmation");
-
-  function validatePassword(){
-    if(password.value != confirm_password.value) {
-      confirm_password.setCustomValidity("Passwords Don't Match");
-    } else {
-      confirm_password.setCustomValidity('');
+  
+  $(document).ready(function () { 
+   $("#new_user").validate({
+    rules: {
+      'user[email]':{required: true, email: true},
+      'user[password]': {required: true, minlength: 6},
+      'user[password_confirmation]': {required: true, equalTo: '#user_password'}
+    },
+    
+    
+    messages: {
+      "user[first_name]": "First Name can't be blank",
+      "user[last_name]": "Last Name can't be blank",
+      "user[email]": {required: "Email can't be blank", email: "You must enter a valid email address"},
+      'user[password_confirmation]': {equalTo: "Password don't match"}
     }
-  }
-
-  password.onchange = validatePassword;
-  confirm_password.onkeyup = validatePassword;
+   });  
+  }); 
+ 
+  // $(document).ready(function () {
+  // $('#new_user').validate({
+  //   debug: true,
+  //   rules: {
+  // 'user[email]': {required: true, email: true},
+  // 'user[password]': {required: true, minlength: 6},
+  // 'user[password_confirmation]': {required: true, equalTo: “#user_password”}
+  // }
+  // });
+  // }); 
 </script>

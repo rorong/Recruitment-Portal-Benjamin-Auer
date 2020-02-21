@@ -1,13 +1,18 @@
 $(document).on('ready turbolinks:load', function() {
     $("#package").change(function(){
-    	
-        if(($("#package").val() == "Receive email once a week") || ($("#package").val() == "Receive email once every two weeks")){
+    	console.log($("#package").val());
+        if(($("#package").val() == 2) || ($("#package").val() == 3)){
           $(".hidden-option").fadeIn('fast'); 
+          $(".buy-btn").fadeIn('fast');
 
         }  
-        if($("#package").val() == "Receive emails daily"){
-          $(".hidden-option").fadeOut('fast'); 
-            
-        }           
+        if($("#package").val() == 1){
+          $(".hidden-option").fadeOut('fast');
+          $(".buy-btn").fadeIn('fast');            
+        }         
+        if($("#package").val() == 0){
+        	$(".hidden-option").fadeOut('fast');
+        	$(".buy-btn").fadeOut('fast');  
+        }  
     });        
 });

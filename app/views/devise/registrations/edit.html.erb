@@ -16,7 +16,7 @@
     </div>
     <div class="form-group">
       <%= f.label :gender %><br />
-      <%= select_tag "gender", options_for_select(['M','F']), {name: "gender", class:'custom-select'} %>
+      <%= f.select "gender", options_for_select(['M','F']), {}, class:'custom-select' %>
     </div>
     <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
       <div>Currently waiting confirmation for: <%= resource.unconfirmed_email %></div>
@@ -35,65 +35,21 @@
     </div>
     <div class="form-group">
       <%= f.label :security_question %>
-      <%= select_tag "security_question", options_for_select(SecurityQuestion.pluck(:question)),{name: "security_question", class:'custom-select'} %>
+      <%= text_field_tag :security_question, security_questions[current_user.answer.first.to_i], class: "form-control", disabled: true %>
     </div>
     <div class="form-group">
       <%= f.label :security_answer %>
-      <%= text_field_tag :answer, "", class: 'form-control' %>
+      <%= f.password_field :answer, class: 'form-control',placeholder: "Answer" %>
     </div>
 
-    <div class="form-group">
-      <%= f.label :package %>
-      <%= select_tag "package", options_for_select(["Receive emails daily","Receive email once a week","Receive email once every two weeks"]),{name: "package", class:'custom-select'} %>
-    </div>
-
-    <div class="hidden-option" style="display: none;">
-      <style>
-        
-
-
-      </style>
-      <div class="dowPicker">
-        <label><h5>Select a day</h></label><br>
-        <div class="dowPickerOption">
-          <input name="dow" type="radio" value=0 id="dow1" checked>
-          <label for="dow1" >S</label>
-        </div>
-        <div class="dowPickerOption">
-          <input name="dow" type="radio" value=1 id="dow2">
-          <label for="dow2">M</label>
-        </div>
-        <div class="dowPickerOption">
-          <input name="dow" type="radio" value=2 id="dow3">
-          <label for="dow3">T</label>
-        </div>
-        <div class="dowPickerOption">
-          <input name="dow" type="radio" value=3 id="dow4">
-          <label for="dow4">W</label>
-        </div>
-        <div class="dowPickerOption">
-          <input name="dow" type="radio" value=4 id="dow5">
-          <label for="dow5">T</label>
-        </div>
-        <div class="dowPickerOption">
-          <input name="dow" type="radio" value=5 id="dow6">
-          <label for="dow6">F</label>
-        </div>
-        <div class="dowPickerOption">
-          <input name="dow" type="radio" value=6 id="dow7">
-          <label for="dow7">S</label>
-        </div>
-      </div> 
-    </div>
-   
 
     <div class="form-group col-md-12">
       <div class="row">
         <div class="col-md-6">
           <%= f.label :include_job %>
-          <%= text_field_tag :include_job1, "#{f.object.include_job1}", class: 'form-control' %>
-          <%= text_field_tag :include_job2, "#{f.object.include_job2}", class: 'form-control' %>
-          <%= text_field_tag :include_job3, "#{f.object.include_job3}", class: 'form-control' %>
+          <%= f.text_field :include_job1, class: 'form-control' %>
+          <%= f.text_field :include_job2, class: 'form-control' %>
+          <%= f.text_field :include_job3, class: 'form-control' %>
         </div>
         <div class="col-md-6">
           <%= f.label :dont_include_job %>
@@ -149,40 +105,60 @@
 
 
 <script>
-  $('#edit_user_details').on('click', function(){
-    var include_job1 = document.getElementById("include_job1");
-    var include_job2 = document.getElementById("include_job2");
-    var include_job3 = document.getElementById("include_job3");
-    var not_include_job1 = document.getElementById("not_include_job1");
-    var not_include_job2 = document.getElementById("not_include_job2");
-    var not_include_job3 = document.getElementById("not_include_job3");
-    var not_include_job_id1 = $("#not_include_job1")[0];
-    var not_include_job_id2 = $("#not_include_job2")[0];
-    var not_include_job_id3 = $("#not_include_job3")[0];
+  // $('#edit_user_details').on('click', function(){
+  //   var include_job1 = document.getElementById("include_job1");
+  //   var include_job2 = document.getElementById("include_job2");
+  //   var include_job3 = document.getElementById("include_job3");
+  //   var not_include_job1 = document.getElementById("not_include_job1");
+  //   var not_include_job2 = document.getElementById("not_include_job2");
+  //   var not_include_job3 = document.getElementById("not_include_job3");
+  //   var not_include_job_id1 = $("#not_include_job1")[0];
+  //   var not_include_job_id2 = $("#not_include_job2")[0];
+  //   var not_include_job_id3 = $("#not_include_job3")[0];
 
-    validate();
-    function validate(){
-      if(not_include_job1.value != "" && not_include_job1.value == include_job1.value) {
-        not_include_job_id1.setCustomValidity("Please use diffrent title");
-      } else if (not_include_job1.value != "" && not_include_job1.value == include_job2.value){
-        not_include_job_id1.setCustomValidity("Please use diffrent title");
-      } else if (not_include_job1.value != "" && not_include_job1.value == include_job3.value) {
-        not_include_job_id1.setCustomValidity("Please use diffrent title");
-      } else if (not_include_job2.value != "" && not_include_job2.value == include_job1.value) {
-        not_include_job_id2.setCustomValidity("Please use diffrent title");
-      } else if (not_include_job2.value != "" && not_include_job2.value == include_job2.value) {
-        not_include_job_id2.setCustomValidity("Please use diffrent title");
-      } else if (not_include_job2.value != "" && not_include_job2.value == include_job3.value) {
-        not_include_job_id2.setCustomValidity("Please use diffrent title");
-      } else if (not_include_job3.value != "" && not_include_job3.value == include_job1.value) {
-        not_include_job_id3.setCustomValidity("Please use diffrent title");
-      } else if (not_include_job3.value != "" && not_include_job3.value == include_job2.value) {
-        not_include_job_id3.setCustomValidity("Please use diffrent title");
-      } else if (not_include_job3.value != "" && not_include_job3.value == include_job3.value) {
-        not_include_job_id3.setCustomValidity("Please use diffrent title");
-      } else{
-        $('#edit_user').submit();
-      }
+  //   validate();
+  //   function validate(){
+  //     if(not_include_job1.value != "" && not_include_job1.value == include_job1.value) {
+  //       not_include_job_id1.setCustomValidity("Please use diffrent title");
+  //     } else if (not_include_job1.value != "" && not_include_job1.value == include_job2.value){
+  //       not_include_job_id1.setCustomValidity("Please use diffrent title");
+  //     } else if (not_include_job1.value != "" && not_include_job1.value == include_job3.value) {
+  //       not_include_job_id1.setCustomValidity("Please use diffrent title");
+  //     } else if (not_include_job2.value != "" && not_include_job2.value == include_job1.value) {
+  //       not_include_job_id2.setCustomValidity("Please use diffrent title");
+  //     } else if (not_include_job2.value != "" && not_include_job2.value == include_job2.value) {
+  //       not_include_job_id2.setCustomValidity("Please use diffrent title");
+  //     } else if (not_include_job2.value != "" && not_include_job2.value == include_job3.value) {
+  //       not_include_job_id2.setCustomValidity("Please use diffrent title");
+  //     } else if (not_include_job3.value != "" && not_include_job3.value == include_job1.value) {
+  //       not_include_job_id3.setCustomValidity("Please use diffrent title");
+  //     } else if (not_include_job3.value != "" && not_include_job3.value == include_job2.value) {
+  //       not_include_job_id3.setCustomValidity("Please use diffrent title");
+  //     } else if (not_include_job3.value != "" && not_include_job3.value == include_job3.value) {
+  //       not_include_job_id3.setCustomValidity("Please use diffrent title");
+  //     } else{
+  //       $('#edit_user').submit();
+  //     }
+  //   }
+  // });
+   $(document).ready(function () { 
+   $("#edit_user").validate({
+    rules: {
+      'user[email]':{required: true, email: true},
+      'user[password]': {minlength: 6},
+      'user[password_confirmation]': {equalTo: '#user_password'},
+      "user[first_name]" : {required: true},
+      "user[last_name]" : {required: true},
+      "user[answer]" : {required: true}
+    },
+    
+    
+    messages: {
+      "user[first_name]": "First Name can't be blank",
+      "user[last_name]": "Last Name can't be blank",
+      "user[email]": {required: "Email can't be blank", email: "You must enter a valid email address"},
+      'user[password_confirmation]': {equalTo: "Password don't match"}
     }
-  });
+   });  
+  }); 
 </script>

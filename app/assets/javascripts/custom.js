@@ -15,17 +15,17 @@ $(document).on('ready turbolinks:load', function() {
       });
   })(jQuery);
 
-  var password = document.getElementById("user_password");
-  var confirm_password = document.getElementById("user_password_confirmation");
+  // var password = document.getElementById("user_password");
+  // var confirm_password = document.getElementById("user_password_confirmation");
 
-  function validatePassword(){
-    if(password.value != confirm_password.value) {
-      confirm_password.setCustomValidity("Passwords Don't Match");
-    } else {
-      confirm_password.setCustomValidity('');
-    }
-  }
+  // function validatePassword(){
+  //   if(password.value != confirm_password.value) {
+  //     confirm_password.setCustomValidity("Passwords Don't Match");
+  //   } else {
+  //     confirm_password.setCustomValidity('');
+  //   }
+  // }
 
-  password.onchange = validatePassword;
-  confirm_password.onkeyup = validatePassword;
+  // password.onchange = validatePassword;
+  // confirm_password.onkeyup = validatePassword;
 });
