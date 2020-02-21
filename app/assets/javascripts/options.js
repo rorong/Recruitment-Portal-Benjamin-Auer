@@ -1,6 +1,5 @@
 $(document).on('ready turbolinks:load', function() {
     $("#package").change(function(){
-    	console.log($("#package").val());
         if(($("#package").val() == 2) || ($("#package").val() == 3)){
           $(".hidden-option").fadeIn('fast'); 
           $(".buy-btn").fadeIn('fast');
