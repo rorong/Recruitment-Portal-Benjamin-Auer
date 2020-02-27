@@ -64,7 +64,7 @@
 #   product: product.id,
 # })
 
-
+product_id=ENV['stripe_product_id']
 ['monthly', 'quaterly', 'yearly'].each do|plan_name|
   case plan_name
     when 'monthly'
@@ -88,7 +88,7 @@
      interval: interval,
      interval_count: interval_count,
      nickname: plan_name,
-     product: 'prod_GnB5XQPvdtCnLd',
+     product: product_id,
    }) 
     
     Plan.create(name: plan_name,
