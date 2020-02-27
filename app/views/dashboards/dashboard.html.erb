@@ -178,26 +178,24 @@
 
 
 <% if @job_search.present? %>
-  <div class="container">
-    <div class="padding-top">
-      <div class="well padding-top" style="background-color:#f2f2f2">
-        <span style="font-size:3.5em;" class="glyphicon glyphicon-th-list"></span>
-        <div class="form-group col-md-12">
-          <div class="row">
-            <div class="widt100">
-              <h3>Update</h3>
-              <div class="form-content-wrap">    
-                <center><span class="col-md-6">Designation :
-                <%= text_field_tag :designation,@job_search.designation, class:"form-control", disabled:true%>
-                 </span>
-                    <span class="col-md-6">Location : 
-                      <%= text_field_tag :location,@job_search.location,class:"form-control",disabled: true %>
-                    </span>
-                   <% if @job_search.is_update == false %>
-                    <span ><button type="button" style="margin-top: 20px;" class="update_job_search btn btn-success" >Update</button></span>
-                  <% end %>  
-                </center>
-                </div>
+  <div class="padding-top">
+    <div class="well padding-top" style="background-color:#f2f2f2">
+      <span style="font-size:3.5em;" class="glyphicon glyphicon-th-list"></span>
+      <div class="form-group col-md-12">
+        <div class="row">
+          <div class="widt100">
+            <h3>Update</h3>
+            <div class="form-content-wrap">
+              <center><span class="col-md-6">Designation :
+              <%= text_field_tag :designation,@job_search.designation, class:"form-control", disabled:true%>
+               </span>
+              <span class="col-md-6">Location :
+                  <%= text_field_tag :location,@job_search.location,class:"form-control",disabled: true %>
+                </span>
+                <%if @job_search.is_update == false%>
+                  <span ><button type="button" style="margin-top: 20px;" class="update_job_search btn btn-success" >Update</button></span>
+                <% end %>
+              </center>
             </div>
           </div>
         </div>                 
@@ -218,23 +216,19 @@
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
+
         <%= form_for (@job_search), :url =>{:action => "update_job_detail"} do |f| %>
           <div class="modal-body mx-3">
-            <%= f.hidden_field :user_id, { :value => current_user.id } %>
-            <%#= f.hidden_field :job_search_type, { :value => "static" } %>
-            
-              <%#= f.text_field :website_url, class: 'form-control' %><br>
-
-              Designation : <%= f.text_field :designation, class: 'form-control'%><br>
-              Location : <%= f.text_field :location, class: 'form-control'%><br>
-           
+              Designation : <%= f.text_field :designation, class: 'form-control'%>
+              Location : <%= f.text_field :location, class: 'form-control'%>
+              <%= f.hidden_field :is_update, { :value => true } %>
           </div>
           <div class="row d-flex justify-content-center">
             <%=f.submit 'Update', class: 'submit_response col-md-4 btn btn-success',style:"padding:10px 0 10px 0; font-size:25px;" %>
           </div>
         <% end %>
       </div>
-    </div>   
+    </div>
   </div>
 <% end %>
 

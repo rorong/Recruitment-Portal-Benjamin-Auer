@@ -4,13 +4,13 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
 
-  has_one :job_search , dependent: :destroy
+  has_one :job_search, dependent: :destroy
   has_one :subscription, dependent: :destroy
   has_one  :plan, through: :subscription
-  #has_many :jobs , dependent: :destroy
   has_one :payment
   belongs_to :admin, optional: true
   has_one :package , through: :subscription
+  has_many :jobs, dependent: :destroy
 
   #validates :first_name, :last_name, presence: true
 

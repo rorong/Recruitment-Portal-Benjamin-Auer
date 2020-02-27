@@ -4,7 +4,7 @@ class RegistrationsController < Devise::RegistrationsController
   def create_job_search
     user = User.find_by(email: params[:user][:email])
     if user.present?
-      JobSearch.create(user_id: user.id, website_url: 'https://www.karriere.at', designation: 'project-manager', location: 'wien', job_search_type: 'static')
+      JobSearch.create(user_id: user.id, designation: 'project-manager', location: 'wien')
     end
   end
 
@@ -22,20 +22,19 @@ class RegistrationsController < Devise::RegistrationsController
   end
 
   def update_user_details
-      if params[:user][:answer].present?
-        if params[:user][:answer] == current_user.answer.sub(current_user.answer.first,"")
-          current_user.update(user_params)
-          flash[:notice] = "User details succesfully updated!!!"
-          redirect_to user_dashboard_path
-        else
-          flash[:alert] = "Answer does not match!!!"
-          redirect_to edit_user_registration_path
-        end
+    if params[:user][:answer].present?
+      if params[:user][:answer] == current_user.answer.sub(current_user.answer.first,"")
+        current_user.update(user_params)
+        flash[:notice] = "User details succesfully updated!!!"
+        redirect_to user_dashboard_path
+      else
+        flash[:alert] = "Answer does not match!!!"
+        redirect_to edit_user_registration_path
+      end
     else
       flash[:alert] = "Please enter the answer!!!"
       redirect_to edit_user_registration_path
     end
-    
   end
 
 
@@ -43,6 +42,19 @@ class RegistrationsController < Devise::RegistrationsController
 
   def user_params
     params.require(:user).permit(:email, :password, :password_confirmation, :gender,:first_name, :last_name, :include_job1, :include_job2, :include_job3, :not_include_job1, :not_include_job2, :not_include_job3,:package)
+  end
+
+
+  def cron_generator(package,day)
+    if (package == "Receive emails daily")
+      day="*"
+      a="*"
+    elsif package == "Receive email once a week"
+      a="*"
+    else
+      a="*/15"
+    end
+    "0 0 0 "+a+" * "+day.to_s
   end
 
   def job_id

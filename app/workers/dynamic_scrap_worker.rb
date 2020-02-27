@@ -1,13 +1,11 @@
 class DynamicScrapWorker
   include Sidekiq::Worker
   sidekiq_options retry: true
-  sidekiq_options queue: "default"
+  sidekiq_options queue: "dynamic_scrap_worker"
 
-  def perform
-  	users=User.all
-  	users.each do |user|
-	    DynamicScraperService.dynamic_scrap(user.job_search.designation,user.job_search.location)
-	end
+
+  def perform(*args)
+    DynamicScraperService.dynamic_scrap(args)
   end
 
 end
