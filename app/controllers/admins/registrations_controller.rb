@@ -6,7 +6,8 @@ class Admins::RegistrationsController < Devise::RegistrationsController
       admin = Admin.new(admin_params)
       if admin.save
         flash[:notice] = "Admin Signup in successfully!!!"
-        redirect_to root_path
+        sign_in admin
+        redirect_to admins_users_path
       end
     end
   end

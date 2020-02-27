@@ -5,13 +5,33 @@
   - default
   - mailers
 :schedule:
-  # auto_renewal_subscriptions:
-  #   cron: '59 23 * * * *'
-  #   class: SubscriptionAutoRenewal
+#   # auto_renewal_subscriptions:
+#   #   cron: '59 23 * * * *'
+#   #   class: SubscriptionAutoRenewal
   
   scrap_job_worker:
     cron: '0 0 0 * * *'
     class: ScrapJobWorker
-  # dynamic_scrap_worker:
-  #   cron: '0 0 0 * * *'
-  #   class: DynamicScrapWorker
+  dynamic_scrap_worker:
+    cron: '0 0 0 * * *'
+    class: DynamicScrapWorker
+
+    # daily_email_worker:
+    #   cron: '0 0 0 * * *'
+    #   class: DailyEmailWorker
+
+    # weekly_email_worker:
+    #   cron: '0 0 0 * * 1'
+    #   class: WeeklyEmailWorker
+
+    # two_week_email_worker:
+    #   cron: '0 0 0 * * 4/14'
+    #   class: TwoWeekEmailWorker
+
+    # monthly_email_worker:
+    #   cron: '0 0 0 * */1 1'
+    #   class: MonthlyEmailWorker
+
+    # yearly_email_worker:
+    #   cron: '0 0 0 * */12 1'
+    #   class: YearlyEmailWorker

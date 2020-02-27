@@ -9,42 +9,44 @@ class SubscriptionsController < ApplicationController
   end
 
   def create
+    Stripe.api_key = ENV['stripe_secret_key']  
     if current_user.present? && params[:plan_id].present?
-      plan_id =  params[:plan_id]
-      plan = Stripe::Plan.retrieve(plan_id)
+      plan = Plan.find_by(plan_id: params[:plan_id])
 
       if params[:payment_method_id].present?
-        #payment = Payment.create(email: current_user.email, user_id: current_user.id)
-
-        #@payment = Payment.new({ email: current_user.email, user_id: current_user.id })
-
+        
         customer =  if current_user.stripe_id?
                       Stripe::Customer.retrieve(current_user.stripe_id)
                     else
                       Stripe::Customer.create({
                         payment_method: params[:payment_method_id],
                         email: current_user.email,
+                        name: current_user.first_name,
+                         address: {
+                                      city: "Delhi",
+                                      country: "United States",
+                                      line1: "asdaad",
+                                      line2: "nll",
+                                      postal_code: "10001",
+                                      state: "U.S"
+                                    },
                         invoice_settings: {
                           default_payment_method: params[:payment_method_id],
                         },
                       })
                     end
-
         subscription =  Stripe::Subscription.create({
                           customer: customer.id,
-                          items: [{plan: plan.id}],
+                          items: [{plan: plan.plan_id}],
                         }) if customer.present?
 
-        #@payment.process_payment(plan, customer)
-        #@payment.save
-
-        user_plan = Plan.create(stripe_id: params[:plan_id],
-          name: plan['nickname'], display_price: plan['amount'])
-
-        Subscription.create(stripe_id: subscription.id, user_id: current_user.id,
-          plan_id: user_plan.id) if subscription.present? && user_plan.present?
-
-        current_user.update_attributes(stripe_id: customer.id, stripe_subscription_id: subscription.id) if customer.present? && subscription.present?
+        Subscription.create(stripe_id: subscription.id, 
+                            user_id: current_user.id,
+                            plan_id: plan.id,
+                            package_id: params[:package]
+                            ) 
+        
+        current_user.update_attributes(stripe_id: customer.id)
 
         redirect_to user_dashboard_path, notice: "Your subscription was set up successfully!"
       else
@@ -53,42 +55,15 @@ class SubscriptionsController < ApplicationController
     end
   end
 
-  def send_job_mail
-    include_job = current_user.include_job1? || current_user.include_job2? || current_user.include_job3?
-
-    not_include_job = current_user.not_include_job1? || current_user.not_include_job2? || current_user.not_include_job3?
-
-    if (include_job && !not_include_job) || (include_job && not_include_job)
-      job_data = Job.where("title = ? OR title = ? OR title = ?", current_user.include_job1, current_user.include_job2, current_user.include_job3)
-    elsif !include_job && not_include_job
-      job_data = Job.where.not("title = ? OR title = ? OR title = ?", current_user.not_include_job1, current_user.not_include_job2, current_user.not_include_job3)
-    else
-      job_data = Job.all
-    end
-    
-    if job_data.present?
-      redirect_to user_dashboard_path, notice: "Email Sent Succesfully!!!"
-    else
-      redirect_to user_dashboard_path, notice: "No job found!!!"
-    end
-  end
-
   def cancel_subscription
     Stripe.api_key = ENV['stripe_secret_key']
-    if current_user.stripe_id? && current_user.stripe_subscription_id?
-      customer = Stripe::Customer.retrieve(current_user.stripe_id)
-
-      stripe_subscription = customer.subscriptions.retrieve(current_user.stripe_subscription_id) if customer.present?
-
-      subscription = Subscription.find_by(stripe_id: stripe_subscription.id) if stripe_subscription.present?
-
-      subscription.update_attributes(stripe_id: nil) if subscription.present?
-      stripe_subscription.delete
-
-      # subscription = current_user.subscription
-      # subscription.destroy if subscription.present?
-
-      current_user.update_attributes(stripe_subscription_id: nil, stripe_id: nil)
+    if current_user.stripe_id?
+      subscription=current_user.subscription
+      subs = Stripe::Subscription.retrieve(subscription.stripe_id)
+      subs.delete
+      subscription.destroy
+      #Sidekiq.remove_schedule(current_user.email)
+      # current_user.update(package: 0, stripe_subscription_id: nil)
       redirect_to user_dashboard_path, notice: " Your subscription deleted successfully!"
     else
       redirect_to user_dashboard_path, notice: "Something went wrong!!!"
@@ -103,4 +78,5 @@ class SubscriptionsController < ApplicationController
       redirect_to new_user_registration_path
     end
   end
+
 end

@@ -1,0 +1,39 @@
+<%= render 'horizontal_sidebar'%>
+<div id="layoutSidenav">
+  <%= render 'vertical_sidebar'%>
+  <div id="layoutSidenav_content">
+    <main>
+      <div class="container-fluid">
+        <h1 class="mt-4">Dashboard</h1>
+        <ol class="breadcrumb mb-4">
+          <li class="breadcrumb-item active">Edit Plan</li>
+        </ol>
+        <div class="jumbotron ">
+          <h2>Edit Email Plan</h2>
+          <%= form_tag(admins_update_email_path(id: @package.plan_id,package: @package.id), :method => :put, :multipart => true) do %>
+            <div class="form-group">
+              <%= label_tag :package_name %>
+              <%= text_field_tag :package_name, "#{@package.name}", class: "form-control" %>
+            </div>
+
+            <div class="form-group">
+              <%= label_tag :interval %>
+               <%= select_tag :interval, options_for_select(Package.intervals), {class:'custom-select',  prompt: "Choose one"} %>
+            </div>
+
+            <div class="form-group">
+              <%= label_tag :payment_plan %>
+               <%= select_tag :payment_plan, options_for_select(Plan.pluck(:name)), {class:'custom-select',  prompt: "Choose one"} %>
+            </div>
+
+
+            <div class="form-group">
+              <%= submit_tag "Update", class: "btn btn-success" %>
+            </div>
+          <% end %>
+          <%= link_to "Back", admins_plan_path, class: "btn btn-primary" %>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>

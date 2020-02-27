@@ -5,6 +5,7 @@ class CreateSubscriptions < ActiveRecord::Migration[6.0]
       t.string :email, default: '', null: false
       t.string :mobile, default: '', null: false
       t.string :expiry_date, default: '', null: false
+      t.string :stripe_id
       t.belongs_to :plan, index: true
       t.belongs_to :user, index: true
 

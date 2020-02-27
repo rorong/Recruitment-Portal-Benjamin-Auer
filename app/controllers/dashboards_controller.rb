@@ -7,19 +7,34 @@ class DashboardsController < ApplicationController
 
   include DashboardsConcern
 
+  def email_package
+    current_user.update(package: params[:dow].to_i)
+    redirect_to user_dashboard_path
+  end
 
   def dashboard
-    @job_search=current_user.job_searches
-    # @static_job_search = JobSearch.where(user_id: current_user.id, job_search_type: 'static').last if current_user.present?
-    # @dynamic_job_search = JobSearch.where(user_id: current_user.id, job_search_type: 'dynamic').last if current_user.present?
+    @user=current_user
+    @job_search=current_user.job_search
+    # @package=current_user.package
+    # if ( User.packages[current_user.package] != 0 and User.packages[current_user.package] != 1 )
+    #   schedule=Sidekiq.get_schedule.select { |k,v| k if k==current_user.email }
+    #   days_of_week=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]
+    #   @dow=days_of_week[schedule.values[0].values[0].last.to_i]
+    # end
+    @plans=Plan.all
+    @subscription=nil
+    @subscription=current_user.subscription unless current_user.stripe_id.nil?
+  
   end
 
   def create_job_detail
+
     if params[:job_search].present?
       @job_search = JobSearch.create(user_id: params[:job_search][:user_id], website_url: params[:job_search][:website_url],designation: params[:job_search][:designation],location: params[:job_search][:location])
       @job_search.save
       redirect_to root_path, notice: "Job details successfully created!!!"
     end
+
   end
 
   def find_job_detail
@@ -37,35 +52,13 @@ class DashboardsController < ApplicationController
   end
 
   def update_job_detail
-    if params[:job_search][:user_id].present?
-      job_search=User.find(params[:job_search][:user_id]).job_searches
-      job_search.each do |job|
-        job.update_attributes(user_id: params[:job_search][:user_id], designation: params[:job_search][:designation],location: params[:job_search][:location], is_update: true)
-      end
-      Sidekiq.set_schedule("dynamic_scrap_worker", { 
-                                                      cron: "0 0 0 * * *",
-                                                      class: 'DynamicScrapWorker',
-                                                      queue:"default",
-                                                      args: current_user.id 
-                                                    })
-      
-      Sidekiq.set_schedule("scrap_job_worker", {
-                                                cron: "0 0 0 * * *",
-                                                class: 'ScrapJobWorker',
-                                                queue:"default",
-                                                args: current_user.id
-                                              })
+    job_search=User.find(params[:job_search][:user_id]).job_search
+    job_search.update_attributes( user_id: params[:job_search][:user_id], 
+                                  designation: params[:job_search][:designation],
+                                  location: params[:job_search][:location], 
+                                  is_update: true )
     
-      redirect_to user_dashboard_url , notice: "Job details successfully updated!!!"
-      # if params[:job_search_type] == 'static'
-      #   @static_job_search = JobSearch.find_by(id: params[:id])
-      #   @static_job_search.update_attributes(user_id: params[:job_search][:user_id], designation: params[:job_search][:designation],location: params[:job_search][:location], is_update: true)
-      # else
-      #   @dynamic_job_search = JobSearch.find_by(id: params[:id])
-      #   @dynamic_job_search.update_attributes(user_id: params[:job_search][:user_id], designation: params[:job_search][:designation],location: params[:job_search][:location], is_update: true)
-      # end
-      #flash[:success]= "Job details successfully updated!!!"
-    end
+    redirect_to user_dashboard_url , notice: "Job details successfully updated!!!"
   end
 
   def destroy_job_detail

@@ -3,6 +3,22 @@ class Admins::UsersController < ApplicationController
   after_action :create_job_search, only: [:create]
   before_action :existing_plan, only: [:index]
 
+  def email_plan
+    @package=Package.all
+  end
+
+  def update_email
+    plan=Plan.find(params[:id])
+    package=Package.find(params[:package])
+    
+    package.update(name:params[:package_name] , plan_id:plan.id , interval: params[:interval].to_i)
+    redirect_to admins_email_path
+  end
+
+  def edit_email
+    @package=Package.find(params[:id])
+  end
+
   def create_job_search
     user = User.find_by(email: params[:user][:email])
     if user.present?
@@ -16,36 +32,43 @@ class Admins::UsersController < ApplicationController
 
   def create_plan
     Stripe.api_key = ENV['stripe_secret_key']
-    product_id = ENV['stripe_product_id']
-    Stripe::Plan.create({
-      amount: params[:amount],
-      currency: 'usd',
-      nickname: params[:plan_name],
-      interval: params[:interval],
-      product: 'prod_GdAUyVxikWn9pG',
-    })
-    redirect_to admins_users_path, notice: "Plan successfully created!!!"
+    plan= Stripe::Plan.create({
+            amount: (params[:amount].to_i*100).to_s,
+            currency: 'usd',
+            nickname: params[:plan_name],
+            interval: params[:interval],
+            interval_count: params[:interval_count],
+            product: 'prod_GnB5XQPvdtCnLd',
+          })
+
+    package=Package.find_by(name: params[:package_name])
+    Plan.create(plan_id: plan.id,   
+                name: params[:plan_name] , 
+                display_price: params[:amount] , 
+                schedule: interval_generator(plan.interval,plan.interval_count),
+                interval:params[:interval],
+                interval_count:params[:interval_count])
+
+    redirect_to admins_plan_path, notice: "Plan successfully created!!!"
   end
 
   def existing_plan
-    Stripe.api_key = ENV['stripe_secret_key']
-    @plan = Stripe::Plan.all
+    @plan=Plan.all
   end
 
   def edit_plan
-    Stripe.api_key = ENV['stripe_secret_key']
-    @plan = Stripe::Plan.retrieve(params[:id])
+    @plan =Plan.find_by(plan_id:params[:id])
   end
 
   def update_plan
     if params[:id].present?
       Stripe.api_key = ENV['stripe_secret_key']
-      @plan = Stripe::Plan.retrieve(params[:id])
       Stripe::Plan.update(
         params[:id],
         {nickname: params[:plan_name]},
-        {amount: params[:amount]},
       )
+      plan=Plan.find_by(plan_id: params[:id])
+      plan.update(name:params[:plan_name])
       redirect_to admins_users_path, notice: "Plan successfully updated!!!"
     else
       redirect_to admins_users_path, notice: "No plan found!!!"
@@ -57,9 +80,10 @@ class Admins::UsersController < ApplicationController
       Stripe.api_key = ENV['stripe_secret_key']
       @plan = Stripe::Plan.retrieve(params[:id])
       @plan.delete if @plan.present?
-      redirect_to admins_users_path, notice: "Plan successfully deleted!!!"
+      Plan.find_by(plan_id: params[:id]).destroy
+      redirect_to admins_plan_path, notice: "Plan successfully deleted!!!"
     else
-      redirect_to admins_users_path, notice: "No plan found!!!"
+      redirect_to admins_plan_path, notice: "No plan found!!!"
     end
   end
 
@@ -153,5 +177,27 @@ class Admins::UsersController < ApplicationController
   def user_params
     params.require(:user).permit(:email, :password, :password_confirmation, :gender,:first_name, :last_name, :include_job1, :include_job2, :include_job3, :not_include_job1, :not_include_job2, :not_include_job3)
   end
+
+  def interval_generator(interval,interval_count)
+    if interval == "week" 
+      a=interval_count
+    elsif interval == "month"
+      a=4*interval_count    
+    elsif interval == "year"
+      a=52
+    else
+      return interval_count.to_s+"d"
+    end
+      a=a.to_s+"w"
+  end
+  
+  def first_mail
+    date  = DateTime.parse("Sunday")
+    delta = date > DateTime.now ? 0 : 7
+    e=date + delta
+    g=((e-DateTime.now)*24*60).to_i
+    g.to_s+"m"
+  end
+
 end
 

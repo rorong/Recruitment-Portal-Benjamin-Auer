@@ -1,52 +1,211 @@
-<% if current_user.stripe_id.present? %>
-  <div class="padding-top">
-    <div class="well padding-top" style="background-color:#f2f2f2">
-      <span style="font-size:3.5em;" class="glyphicon glyphicon-th-list"></span>
-        <% plan = get_plan_detail %>
-        <div class="form-group col-md-12">
-          <div class="row">
-            <div class="col-md-6">
-              <h2>Package Information</h2>
-              Type:<%= plan['nickname'] %><br>
-              Price:<%= plan['amount'] %>
-            </div>
-          </div>
-        </div>
-    </div>
-  </div>
-<%end %>
-
-<% if @job_search.present? %>
-  <div class="padding-top">
-    <div class="well padding-top" style="background-color:#f2f2f2">
-      <span style="font-size:3.5em;" class="glyphicon glyphicon-th-list"></span>
-      <div class="form-group col-md-12">
-        <div class="row">
-          <div class="widt100">
-            <h3>Update</h3>
-            <div class="form-content-wrap">    
-              <center><span class="col-md-6">Designation :
-               <%#= select_tag "designation", options_for_select(@job_search.pluck(:designation).uniq),{name: "designation", class:'custom-select form-control'} %>
-              <%= text_field_tag :designation,@job_search.first.designation, class:"form-control", disabled:true%>
-               </span>
-               <!--<input class="form-control" value='<%#= @static_job_search.designation %>' disabled/></span><br>-->
-              <span class="col-md-6">Location : 
-                <%#= select_tag "location", options_for_select(@job_search.pluck(:location).uniq),{name: "location", class:'pad custom-select form-control'} %>
-                  <%= text_field_tag :location,@job_search.first.location,class:"form-control",disabled: true %>
-                </span>
-                <!--<input class="form-control" value='<%#= @static_job_search.location %>' disabled/></span><br>-->
-                <%if @job_search.any? {|job| job.is_update == false} %>
-                  <span ><button type="button" style="margin-top: 20px;" class="update_job_search btn btn-success" >Update</button></span>
-                <% end %>  
-              </center>
-              </div>
+<% unless @subscription== nil %>
+  <div class="jumbotron pricing py-5">
+  <div class="container">
+    <p class="card-title text-uppercase text-center" style="font-size:2rem;">Selected Package</p>
+    <div class="row">
+      <% package = current_user.package %>
+       <div class="col-lg-offset-4 col-lg-4" style="padding:5px;">
+        <div class="card mb-5 mb-lg-0">
+          <div class="card-body">
+            <h5 class="card-title text-muted text-uppercase text-center"><%=package.name%></h5>
+            
+            <h6 class="card-price text-center">$<%=package.plan.display_price%><span class="period"> <%=pluralize(package.plan.interval_count,package.plan.interval)%></span></h6>
+            <hr>
+            <ul class="fa-ul">
+              <li><span class="fa-li"><i class="fas fa-check"></i></span>Pay $<%=package.plan.display_price%> every <%=pluralize(package.plan.interval_count,package.plan.interval)%></li>
+              <li><span class="fa-li"><i class="fas fa-check"></i></span><%=package.interval%> emails.</li>
+               <%unless Package.intervals[package.interval]==0 %>
+              <li><span class="fa-li"><i class="fas fa-check"></i></span>Emails will be sent on Mondays.</li>
+              <% else %>
+            <li><span class="fa-li"><i class="fas fa-check"></i></span>Emails will be sent everyday.</li>
+            <%end%>
+            </ul>
+            <%= link_to 'Cancel Subscription', cancel_subscription_path, class: "btn btn-block btn-danger text-uppercase" %>
           </div>
         </div>
       </div>
-                  
+  </div>
+</div>
+
+
+    <%# unless Package.intervals[package.interval] == 0 %>
+      <!-- <div class="col-md-12" >
+          <div class="form-group">    
+            <p class="card-title text-uppercase text-center" style="font-size:1rem;">Receive Emails:</p>
+            <%#= form_tag(email_package_path, :method => :post, :multipart => true) do %>
+            <%#= select_tag :package, options_for_select(User.packages), {class:'custom-select'} %>
+          </div>
+          <div class="hidden-option">
+            <div class="dowPicker">
+              <label><h5>Select a day</h></label><br>
+              <div class="dowPickerOption">
+                <input name="dow" type="radio" value=0 id="dow1" checked>
+                <label for="dow1" >S</label>
+              </div>
+              <div class="dowPickerOption">
+                <input name="dow" type="radio" value=1 id="dow2">
+                <label for="dow2">M</label>
+              </div>
+              <div class="dowPickerOption">
+                <input name="dow" type="radio" value=2 id="dow3">
+                <label for="dow3">T</label>
+              </div>
+              <div class="dowPickerOption">
+                <input name="dow" type="radio" value=3 id="dow4">
+                <label for="dow4">W</label>
+              </div>
+              <div class="dowPickerOption">
+                <input name="dow" type="radio" value=4 id="dow5">
+                <label for="dow5">T</label>
+              </div>
+              <div class="dowPickerOption">
+                <input name="dow" type="radio" value=5 id="dow6">
+                <label for="dow6">F</label>
+              </div>
+              <div class="dowPickerOption">
+                <input name="dow" type="radio" value=6 id="dow7">
+                <label for="dow7">S</label>
+              </div>
+            </div> 
+          </div>
+                
+          <center >
+            <div class="panel-footer">
+              <%#= submit_tag "Set", class: "btn btn-success" %>
+            </div>
+          </center>
+         <%#end%>
+        </div>
+ -->      <%#end%>
+        <%# else %>
+         <!--  <div class="col-md-12" >
+            <p class="card-title text-uppercase text-center" style="font-size:1rem;"><%#=current_user.package%></p>
+            <p class="card-title text-uppercase text-center" style="font-size:0.7rem;"><%#=Date::DAYNAMES[current_user.stripe_subscription_id.to_i] unless current_user.stripe_subscription_id == nil%></p>
+            <center >
+            <div class="panel-footer">
+              <%#= link_to "Change", email_package_path(package: 0) ,method: :post , class:"btn btn-danger" %>
+            </div>
+          </center>
+          </div>        
+        <%#end%>
+      </div>
+    </div> -->
+  </div>
+</div> 
+<%end %>
+
+<% if @subscription == nil %>
+  
+<!-- 
+<div class="jumbotron pricing py-5">
+  <div class="container">
+    <p class="card-title text-uppercase text-center" style="font-size:2rem;">Select Package</p>
+    <div class="row">
+      <div class="col-md-12" >
+            <div class="form-group">    
+              <p class="card-title text-uppercase text-center" style="font-size:1rem;">Receive Emails:</p>
+              <%#= form_tag(payment_form_path, :method => :get, :multipart => true) do %>
+              <%#= select_tag :package, options_for_select(Package.pluck(:name)), {class:'custom-select',  prompt: "Choose one"} %>
+            </div>
+            <div class="hidden-option" style="display: none;">
+              <div class="dowPicker">
+                <label><h5>Select a day</h></label><br>
+                <div class="dowPickerOption">
+                  <input name="dow" type="radio" value=0 id="dow1" checked>
+                  <label for="dow1" >S</label>
+                </div>
+                <div class="dowPickerOption">
+                  <input name="dow" type="radio" value=1 id="dow2">
+                  <label for="dow2">M</label>
+                </div>
+                <div class="dowPickerOption">
+                  <input name="dow" type="radio" value=2 id="dow3">
+                  <label for="dow3">T</label>
+                </div>
+                <div class="dowPickerOption">
+                  <input name="dow" type="radio" value=3 id="dow4">
+                  <label for="dow4">W</label>
+                </div>
+                <div class="dowPickerOption">
+                  <input name="dow" type="radio" value=4 id="dow5">
+                  <label for="dow5">T</label>
+                </div>
+                <div class="dowPickerOption">
+                  <input name="dow" type="radio" value=5 id="dow6">
+                  <label for="dow6">F</label>
+                </div>
+                <div class="dowPickerOption">
+                  <input name="dow" type="radio" value=6 id="dow7">
+                  <label for="dow7">S</label>
+                </div>
+              </div> 
+            </div>
+          </div>
+          </div> -->
+
+  <div class="jumbotron pricing py-5">
+  <div class="container">
+      <div class="row">
+    <%Package.all.each do |package| %>
+      <div class="col-lg-4" style="padding:5px;">
+        <div class="card mb-5 mb-lg-0">
+          <div class="card-body">
+            <h5 class="card-title text-muted text-uppercase text-center"><%=package.name%></h5>
+            <h6 class="card-price text-center">$<%=package.plan.display_price%><span class="period"> <%=pluralize(package.plan.interval_count,package.plan.interval)%></span></h6>
+            <hr>
+            <ul class="fa-ul">
+              <li><span class="fa-li"><i class="fas fa-check"></i></span>Pay $<%=package.plan.display_price%> every <%=pluralize(package.plan.interval_count,package.plan.interval)%></li>
+              <li><span class="fa-li"><i class="fas fa-check"></i></span><%=package.interval%> emails.</li>
+              <%unless Package.intervals[package.interval]==0 %> 
+              <li><span class="fa-li"><i class="fas fa-check"></i></span>Emails will be sent on Mondays.</li>
+            </ul>
+            <% else %>
+            <li><span class="fa-li"><i class="fas fa-check"></i></span>Emails will be sent everyday.</li>
+            <%end%>
+            <center>
+            <%= link_to 'Pay', payment_form_path(plan_is: package.plan.plan_id,package:package.id), class: "btn btn-block btn-primary text-uppercase" %>
+          </center>
+          </div>
+        </div>
+      </div>
+     <% end %>
+    </div>
+
+
+  </div>
+</div>
+<% end %>
+
+
+<% if @job_search.present? %>
+  <div class="container">
+    <div class="padding-top">
+      <div class="well padding-top" style="background-color:#f2f2f2">
+        <span style="font-size:3.5em;" class="glyphicon glyphicon-th-list"></span>
+        <div class="form-group col-md-12">
+          <div class="row">
+            <div class="widt100">
+              <h3>Update</h3>
+              <div class="form-content-wrap">    
+                <center><span class="col-md-6">Designation :
+                <%= text_field_tag :designation,@job_search.designation, class:"form-control", disabled:true%>
+                 </span>
+                    <span class="col-md-6">Location : 
+                      <%= text_field_tag :location,@job_search.location,class:"form-control",disabled: true %>
+                    </span>
+                   <% if @job_search.is_update == false %>
+                    <span ><button type="button" style="margin-top: 20px;" class="update_job_search btn btn-success" >Update</button></span>
+                  <% end %>  
+                </center>
+                </div>
+            </div>
+          </div>
+        </div>                 
+      </div>
     </div>
   </div>
 <%end%>
+
 
 <% if @job_search.present? %>
   <div class="modal fade" id="updateJobDetailModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
@@ -59,7 +218,7 @@
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
-        <%= form_for (@job_search.first), :url =>{:action => "update_job_detail"} do |f| %>
+        <%= form_for (@job_search), :url =>{:action => "update_job_detail"} do |f| %>
           <div class="modal-body mx-3">
             <%= f.hidden_field :user_id, { :value => current_user.id } %>
             <%#= f.hidden_field :job_search_type, { :value => "static" } %>
@@ -75,8 +234,7 @@
           </div>
         <% end %>
       </div>
-    </div>
-    
+    </div>   
   </div>
 <% end %>
 
@@ -88,6 +246,77 @@
     }).done(function (response) {
     });
   })
+
+
+  //strip payment
+
+// $(document).on('click', '.buy-btn', function(){
+//   var handler = StripeCheckout.configure({
+//     key: 'pk_test_mqEMicb8hY9liHmVYoT9PUg200h00TjHnY',
+//     //get a publishable key that we put in editor depending on environment: production or development
+//     locale: 'auto',
+//     //handle translation
+//     name: "upload.express",
+//     description: "Add your credit card information",
+//     email: "<%= current_user.email %>",
+//     panelLabel: "Add payment method",
+//     allowRememberMe: false,
+//     token: function (token) {
+//         var form = document.getElementById('billing-create-payment-method');
+//         //we will create element with this id in the next step
+//         var hiddenInput = document.createElement('input');
+//         hiddenInput.setAttribute('type', 'hidden');
+//         hiddenInput.setAttribute('name', 'stripeToken');
+//         hiddenInput.setAttribute('value', token.id);
+//         //creating an <input type="hidden" name="stripeToken" value="<id>"/>. We will need this information in the next steps to link a user to his card 
+//         form.appendChild(hiddenInput);
+//         //adding this input when we use a form.
+//         form.submit();
+//     }
+// });
+
+// handler.open();
+
+// window.addEventListener('popstate', function() {
+//     handler.close();
+// });
+// });
+
+$(document).on('ready turbolinks:load', function() {
+    $("#package").change(function(){
+        if($("#package").val() == "Weekly"){
+          $("#twoweek").fadeOut('fast');
+          $("#daily").fadeOut('fast');
+          $("#weekly").fadeIn('fast');
+          $(".hidden-option").fadeIn('fast');
+
+        } 
+        else 
+        if($("#package").val() == "Daily"){
+          $("#twoweek").fadeOut('fast');
+          $("#weekly").fadeOut('fast');
+          $("#daily").fadeIn('fast');   
+          $(".hidden-option").fadeOut('fast');       
+        }   
+        else      
+        if($("#package").val() == "Every 2 Weeks"){
+          $("#weekly").fadeOut('fast');
+          $("#daily").fadeOut('fast');
+          $("#twoweek").fadeIn('fast');
+          $(".hidden-option").fadeIn('fast');
+          
+        }  
+        else{
+          $("#weekly").fadeOut('fast');
+          $("#daily").fadeOut('fast');
+          $("#twoweek").fadeOut('fast');
+          $(".hidden-option").fadeOut('fast');
+
+        }
+    });        
+});
+
+
 </script>
 
 <style type="text/css">
@@ -192,4 +421,98 @@
   .panel-commingsoon{
     height:180px;
   }
+
+  .dowPicker {
+          width: 300px;
+          margin: 0 auto;
+          text-align: center;
+          padding: 0 0 0 5px;
+        
+        .dowPickerOption {
+            display: inline-block;
+          
+        h1{
+
+        }
+        input[type=radio] {
+            display: none;
+            }
+          
+        label {
+            font-size: 50px;
+            color: #A7A7A7;
+            cursor: pointer;
+            }
+        input[type=radio]:checked ~ label {
+            color: #464646;
+            font-weight: 500;
+    }
+  }
+ }
+
+/*pricing banners*/
+
+div.pricing {
+  background: #007bff;
+  background: linear-gradient(to right, #0062E6, #33AEFF);
+}
+
+.pricing .card {
+  border: none;
+  border-radius: 1rem;
+  transition: all 0.2s;
+  box-shadow: 0 0.5rem 1rem 0 rgba(0, 0, 0, 0.1);
+}
+
+.pricing hr {
+  margin: 1.5rem 0;
+}
+
+.pricing .card-title {
+  margin: 0.5rem 0;
+  font-size: 0.9rem;
+  letter-spacing: .1rem;
+  font-weight: bold;
+}
+
+.pricing .card-price {
+  font-size: 3rem;
+  margin: 0;
+}
+
+.pricing .card-price .period {
+  font-size: 0.8rem;
+}
+
+.pricing ul li {
+  margin-bottom: 1rem;
+}
+
+.pricing .text-muted {
+  opacity: 0.7;
+}
+
+.pricing .btn {
+  font-size: 80%;
+  border-radius: 5rem;
+  letter-spacing: .1rem;
+  font-weight: bold;
+  padding: 1rem;
+  opacity: 0.7;
+  transition: all 0.2s;
+}
+
+/* Hover Effects on Card */
+
+@media (min-width: 992px) {
+  .pricing .card:hover {
+    margin-top: -.25rem;
+    margin-bottom: .25rem;
+    box-shadow: 0 0.5rem 1rem 0 rgba(0, 0, 0, 0.3);
+  }
+  .pricing .card:hover .btn {
+    opacity: 1;
+  }
+}
+
 </style>

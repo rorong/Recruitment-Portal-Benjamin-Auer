@@ -8,7 +8,7 @@
         <ol class="breadcrumb mb-4">
           <li class="breadcrumb-item active">You have following plans</li>
         </ol>
-        <h1> Plans</h1>
+        <h1>Payment Plans</h1>
         <div>
           <%= link_to 'Create Plan', admins_new_plan_path, class: "btn btn-primary" %>
         </div><br>
@@ -16,19 +16,21 @@
           <thead>
             <tr>
               <th>Plan Name</th>
-            <th>Amount</th>
-            <th>Currency</th>
-            <th colspan="2">Action</th>
+              <th>Plan ID</th>
+              <th>Amount</th>
+              <th>Payment</th>
+              <th colspan="2">Action</th>
             </tr>
           </thead>
           <tbody>
             <% @plan.each do |plan| %>
               <tr>
-                <td><%= plan['nickname'] %></td>
-                <td><%= plan['amount']%></td>
-                <td><%= plan['currency']%></td>
-                <td><%= link_to 'Edit', admins_edit_plan_path(id: plan.id) %></td>
-                <td><%= link_to 'Delete', admins_delete_plan_path(id: plan.id), data: { confirm: "Are you sure you want to cancel your account?" }, method: :delete %></td>
+                <td><%= plan.name %></td>
+                <td><%= plan.plan_id %></td>
+                <td>$<%= plan.display_price%></td>
+                <td>every <%=pluralize(plan.interval_count,plan.interval)%></td>
+                <td><%= link_to 'Edit', admins_edit_plan_path(id: plan.plan_id) %></td>
+                <td><%= link_to 'Delete', admins_delete_plan_path(id: plan.plan_id), data: { confirm: "Are you sure you want to cancel your account?" }, method: :delete %></td>
               </tr>
            <% end %>
           </tbody>

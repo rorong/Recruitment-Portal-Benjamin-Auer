@@ -37,6 +37,19 @@ class DeviseCreateUsers < ActiveRecord::Migration[6.0]
 
 
       t.timestamps null: false
+      # Add fields other than devise
+      t.string :gender
+      t.string :include_job1
+      t.string :include_job2
+      t.string :include_job3
+      t.string :not_include_job1
+      t.string :not_include_job2
+      t.string :not_include_job3
+      t.string :stripe_id
+      t.string :stripe_subscription_id
+      t.string :admin_id
+      t.integer :package, default: 0 
+      t.string :answer 
     end
 
     add_index :users, :email,                unique: true

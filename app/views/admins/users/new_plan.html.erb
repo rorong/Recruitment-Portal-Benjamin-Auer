@@ -19,12 +19,18 @@
               <%= label_tag :amount %>
               <%= number_field_tag :amount, "", required: true, class: 'form-control' %>
             </div>
-            <div class="form-group">
-              <%= label_tag :interval %>
-              <%#= text_field_tag :amount %>
-              <%=select_tag 'interval', options_for_select([["day"], ["week"], ["month"], ["year"]]), class: 'form-control' %>
-            </div>
+            <div class="row form-group">
+              <div class="col-2">
+                <label>Payment Plan (every):</label>
+              </div>
+              <div class="col-1"  id="plan">
+                <input type="number" id="interval_count" name="interval_count" class="form-control" disabled>
+              </div>
 
+              <div class="col-4">    
+                <%=select_tag 'interval', options_for_select([["day"], ["week"], ["month"], ["year"]],), {class: 'form-control',prompt: '-Select-',required: true} %>     
+              </div>
+            </div>
             <div class="form-group">
               <%= submit_tag "Create", class: "btn btn-primary" %>
             </div>
@@ -34,3 +40,44 @@
     </main>
   </div>
 </div>
+
+<script>
+  $(document).on('change', '#interval', function(){
+    var del=document.getElementById('interval_count');
+    if(typeof(del) != 'undefined' && del != null){
+        del.parentNode.removeChild(del);
+    }
+
+    var select=document.getElementById('interval');
+    var element = document.getElementById('plan');
+    //we will create element with this id in the next step
+    var input = document.createElement('input');
+    input.setAttribute('type', 'number');
+    input.setAttribute('name', 'interval_count');
+    input.setAttribute('id','interval_count');
+    input.setAttribute('class','form-control');
+    input.setAttribute('min',1);
+    input.required=true;
+
+    if (select.value == "day"){
+      input.setAttribute('max',31);
+      input.placeholder = "1-31" ;
+    }
+
+    else if (select.value == "week"){
+      input.setAttribute('max',52);
+      input.placeholder = "1-52" ;
+    }
+
+    else if (select.value == "month"){
+      input.setAttribute('max',12);
+      input.placeholder = "1-12" ;
+    }
+    else{
+      input.setAttribute('max',1);
+    }
+
+    element.appendChild(input);
+    //adding this input when we use a form.
+  })
+</script>

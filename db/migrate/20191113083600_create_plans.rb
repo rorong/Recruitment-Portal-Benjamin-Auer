@@ -1,9 +1,11 @@
 class CreatePlans < ActiveRecord::Migration[6.0]
   def change
     create_table :plans do |t|
-      t.string :stripe_id, null: false
+      t.string :plan_id, null: false
       t.string :name
-      t.decimal :display_price
+      t.string :interval
+      t.string :interval_count
+      t.integer :display_price
 
       t.timestamps
     end

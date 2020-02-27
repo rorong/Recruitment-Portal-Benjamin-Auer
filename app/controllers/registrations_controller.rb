@@ -25,11 +25,6 @@ class RegistrationsController < Devise::RegistrationsController
       if params[:user][:answer].present?
         if params[:user][:answer] == current_user.answer.sub(current_user.answer.first,"")
           current_user.update(user_params)
-          # Sidekiq.set_schedule(current_user.email, {  cron: cron_generator( params[:user][:package] , params[:dow] ),
-          #                                             class: 'EmailWorker',
-          #                                             queue:"mailers",
-          #                                             args: current_user.id, 
-          #                                             enabled: true })
           flash[:notice] = "User details succesfully updated!!!"
           redirect_to user_dashboard_path
         else
@@ -48,19 +43,6 @@ class RegistrationsController < Devise::RegistrationsController
 
   def user_params
     params.require(:user).permit(:email, :password, :password_confirmation, :gender,:first_name, :last_name, :include_job1, :include_job2, :include_job3, :not_include_job1, :not_include_job2, :not_include_job3,:package)
-  end
-
-
-  def cron_generator(package,day)
-    if (package == "Receive emails daily") 
-      day="*"
-      a="*"
-    elsif package == "Receive email once a week"
-      a="*"      
-    else
-      a="*/15"
-    end
-    "0 0 0 "+a+" * "+day.to_s
   end
 
   def job_id
