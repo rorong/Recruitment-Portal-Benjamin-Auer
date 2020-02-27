@@ -4,8 +4,6 @@
 :queues:
   - default
   - mailers
-  - scrap_job
-  - dynamic_scrap_worker
 :schedule:
 #   # auto_renewal_subscriptions:
 #   #   cron: '59 23 * * * *'

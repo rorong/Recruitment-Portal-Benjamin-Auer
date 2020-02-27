@@ -1,9 +1,9 @@
 class ScrapJobWorker
   include Sidekiq::Worker
   sidekiq_options retry: true
-  sidekiq_options queue: "scrap_job"
+  sidekiq_options queue: "default"
 
-  def perform(*args)
-    ScraperService.scrap_job(args)
+  def perform
+			ScraperService.scrap_job(User.pluck(:id))
   end
 end

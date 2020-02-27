@@ -32,20 +32,19 @@ class Admins::UsersController < ApplicationController
 
   def create_plan
     Stripe.api_key = ENV['stripe_secret_key']
+    product_id=ENV['stripe_product_id']
     plan= Stripe::Plan.create({
             amount: (params[:amount].to_i*100).to_s,
             currency: 'usd',
             nickname: params[:plan_name],
             interval: params[:interval],
             interval_count: params[:interval_count],
-            product: 'prod_GnB5XQPvdtCnLd',
+            product: product_id,
           })
 
-    package=Package.find_by(name: params[:package_name])
     Plan.create(plan_id: plan.id,   
                 name: params[:plan_name] , 
                 display_price: params[:amount] , 
-                schedule: interval_generator(plan.interval,plan.interval_count),
                 interval:params[:interval],
                 interval_count:params[:interval_count])
 
