@@ -2,17 +2,17 @@ class SubscriptionsController < ApplicationController
   before_action :authenticate_user!, except: [:new]
   before_action :redirect_to_signup, only: [:new]
   before_action :fetch_plan, only: [:payment_form]
+  before_action :stripe_api_key, only: [:create, :cancel_subscription]
 
   def fetch_plan
-    Stripe.api_key = ENV['stripe_secret_key']
+    
     @plan = Stripe::Plan.all
   end
 
   def create
-    Stripe.api_key = ENV['stripe_secret_key']
+    
     if current_user.present? && params[:plan_id].present?
       plan = Plan.find_by(plan_id: params[:plan_id])
-
       if params[:payment_method_id].present?
         #move it to a model instance method
         customer =  if current_user.stripe_id?
@@ -56,7 +56,7 @@ class SubscriptionsController < ApplicationController
   end
 
   def cancel_subscription
-    Stripe.api_key = ENV['stripe_secret_key']
+    
     if current_user.stripe_id?
       subscription=current_user.subscription
       subs = Stripe::Subscription.retrieve(subscription.stripe_id)
@@ -79,4 +79,7 @@ class SubscriptionsController < ApplicationController
     end
   end
 
+  def stripe_api_key
+    Stripe.api_key = ENV['stripe_secret_key']
+  end
 end

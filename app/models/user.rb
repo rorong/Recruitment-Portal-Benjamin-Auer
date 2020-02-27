@@ -4,6 +4,8 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
 
+  after_create :create_job_search
+
   has_one :job_search, dependent: :destroy
   has_one :subscription, dependent: :destroy
   has_one  :plan, through: :subscription
@@ -11,8 +13,6 @@ class User < ApplicationRecord
   belongs_to :admin, optional: true
   has_one :package , through: :subscription
   has_many :jobs, dependent: :destroy
-
-  #validates :first_name, :last_name, presence: true
 
   def password_required?
     false
@@ -24,6 +24,10 @@ class User < ApplicationRecord
 
   def fullname
     "#{first_name} #{last_name}"
+  end
+
+  def create_job_search
+    JobSearch.create(user_id: self.id, designation: 'project-manager', location: 'wien')
   end
 
 end

@@ -9,7 +9,9 @@
           <li class="breadcrumb-item active">Dashboard</li>
         </ol>
         <div class="card mb-4">
-          <div class="card-header"><i class="fas fa-table mr-1"></i>Users List</div>
+          <div class="card-header"><i class="fas fa-table mr-1"></i>Users List
+            <%=link_to "+",new_admins_user_path, class:"btn btn-success float"%>
+          </div>
           <div class="card-body">
             <div class="table-responsive">
               <% if @users.present? %>
@@ -46,3 +48,8 @@
     </main>
   </div>
 </div>
+<style>
+  .float{
+    float:right;
+  }
+</style>

@@ -1,13 +1,13 @@
 class RegistrationsController < Devise::RegistrationsController
-  after_action :create_job_search, only: [:create]
+  # after_action :create_job_search, only: [:create]
 
   #Move in model callback
-  def create_job_search
-    user = User.find_by(email: params[:user][:email])
-    if user.present?
-      JobSearch.create(user_id: user.id, designation: 'project-manager', location: 'wien')
-    end
-  end
+  # def create_job_search
+  #   user = User.find_by(email: params[:user][:email])
+  #   if user.present?
+  #     JobSearch.create(user_id: user.id, designation: 'project-manager', location: 'wien')
+  #   end
+  # end
 
   def create
     user = User.new(user_params)

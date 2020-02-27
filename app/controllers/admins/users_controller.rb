@@ -1,7 +1,7 @@
 class Admins::UsersController < ApplicationController
   before_action :authenticate_admin!
-  after_action :create_job_search, only: [:create]
   before_action :existing_plan, only: [:index]
+  before_action :admin_stripe_api_key, only: [:create_plan,:update_plan,:delete_plan]
 
   def email_plan
     @package=Package.all
@@ -19,19 +19,11 @@ class Admins::UsersController < ApplicationController
     @package=Package.find(params[:id])
   end
 
-  def create_job_search
-    user = User.find_by(email: params[:user][:email])
-    if user.present?
-      JobSearch.create(user_id: user.id, website_url: 'https://www.karriere.at', designation: 'project-manager', location: 'wien', job_search_type: 'static')
-      JobSearch.create(user_id: user.id, website_url: 'https://jobs.derstandard.at', designation: 'project-manager', location: 'wien', job_search_type: 'dynamic')
-    end
-  end
-
   def new_plan
   end
 
   def create_plan
-    Stripe.api_key = ENV['stripe_secret_key']
+    
     product_id=ENV['stripe_product_id']
     plan= Stripe::Plan.create({
             amount: (params[:amount].to_i*100).to_s,
@@ -61,7 +53,7 @@ class Admins::UsersController < ApplicationController
 
   def update_plan
     if params[:id].present?
-      Stripe.api_key = ENV['stripe_secret_key']
+      
       Stripe::Plan.update(
         params[:id],
         {nickname: params[:plan_name]},
@@ -76,7 +68,7 @@ class Admins::UsersController < ApplicationController
 
   def delete_plan
     if params[:id].present?
-      Stripe.api_key = ENV['stripe_secret_key']
+      
       @plan = Stripe::Plan.retrieve(params[:id])
       @plan.delete if @plan.present?
       Plan.find_by(plan_id: params[:id]).destroy
@@ -96,19 +88,15 @@ class Admins::UsersController < ApplicationController
   end
 
   def create
-    if params[:user].present?
       user = User.new(user_params)
-      if user.save! && params[:security_question].present?
-        sq = SecurityQuestion.find_by(question: params[:security_question])
-        user_question =  user.security_questions << sq if sq
-        answer = Answer.create(answer: params[:answer].downcase)
-        user_question.last.answer = answer
-        session[:user_id] = user.id
-        user.update_attributes(admin_id: current_admin.id) if current_admin.present?
-        flash[:notice] = "Signup in successfully."
-        redirect_to admins_users_path
-      end
+    if user.save
+      user.answer = security_questions.find_index(params[:security_question]).to_s+params.dig(:user, :answer)
+      user.save
+      flash[:notice] = "User created."
+    else
+      flash[:notice] = "Something went wrong."
     end
+    redirect_to admins_users_path
   end
 
   def show
@@ -196,6 +184,10 @@ class Admins::UsersController < ApplicationController
     e=date + delta
     g=((e-DateTime.now)*24*60).to_i
     g.to_s+"m"
+  end
+
+  def admin_stripe_api_key
+    Stripe.api_key = ENV['stripe_secret_key']
   end
 
 end
