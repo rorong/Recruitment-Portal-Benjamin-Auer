@@ -1,3 +1,108 @@
 // Place all the styles related to the Dashboards controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+
+
+<style type="text/css">
+
+  .form-content-wrap{
+    display: flex;
+    flex-direction: column;
+    /* justify-content: center; */
+    align-items: center;
+  }
+  .widt100{
+    width: 100%;
+  }
+  .form-content-wrap button{
+    margin-bottom: 20px;
+    padding:8px 30px;
+  }
+
+  .well{
+    box-shadow: 0 0 4px 0 rgba(0,0,0,.08),0 2px 4px 0 rgba(0,0,0,.12);
+    border-radius: 4px;
+  }
+
+  .padding-top{
+    padding-top: 25px;
+  }
+
+  .row{
+    margin: 10px;
+  }
+  .pad{
+    margin-bottom: 25px;
+  }
+
+  .btn-default {
+    color: #333;
+    background-color: #fff;
+    border-color: #ccc;
+  }
+
+  .btn {
+    display: inline-block;
+    padding: 0px 6px;
+    margin-bottom: 0;
+    font-size: 14px;
+    font-weight: 400;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    cursor: pointer;
+    border: 1px solid transparent;
+    border-radius: 4px;
+  }
+
+  .panel {
+    -webkit-animation: .5s ease;
+    -moz-animation: .5s ease;
+    -o-animation: .5s ease;
+    margin-bottom:10px;
+  }
+
+  .panel:hover {
+    -webkit-transform: scale(1.05);
+    -moz-transform:scale(1.05);
+    -ms-transform:scale(1.05);
+    -o-transform:scale(1.05);
+    transform:scale(1.05);
+  }
+
+  .desc{
+    border: 0px;
+    text-align: center;
+    padding-top:10px;
+  }
+
+  .panel-updated {
+    margin-left:-15px;
+    margin-right:-15px;
+    margin-bottom:-15px;
+    height: 250px;
+    padding-left:15px;
+    padding-right:15px;
+    padding-top:0px;
+  }
+
+  .panel-oracle {
+    margin-left:-15px;
+    margin-right:-15px;
+    margin-bottom:-4px;
+  }
+
+  .panel-cust {
+    border: 2px solid #a8a8a8;
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.5);
+    width:95%;
+  }
+
+  .panel-commingsoon:hover{
+    background:rgba(0,0,0,.75);
+  }
+
+  .panel-commingsoon{
+    height:180px;
+  }
+</style>

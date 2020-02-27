@@ -5,12 +5,13 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable
 
   has_many :security_questions
-  has_many :job_searches
+  has_one :job_search, dependent: :destroy
   has_one :subscription, dependent: :destroy
   has_one  :plan, through: :subscription
 
   has_one :payment
   belongs_to :admin, optional: true
+  has_many :jobs, dependent: :destroy
 
 
   #validates :first_name, :last_name, presence: true

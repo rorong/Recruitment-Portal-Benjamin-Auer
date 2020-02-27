@@ -7,129 +7,79 @@ class DynamicScraperService
   require 'date'
 
   class << self
-    def dynamic_scrap(designation,location)
+    def dynamic_scrap(user_ids)
       begin
-        jobs = Array.new
-        browser = Watir::Browser.new :chrome
-        browser.goto('https://jobs.derstandard.at/jobsuche')
-        browser.text_field(:id => "jobSearchListInput").set designation
-        browser.text_field(:id => "regionSearchListInput").set location
-        browser.button(:value => 'Jobs suchen').click
-        sleep 5
-        parse_page ||= Nokogiri::HTML(browser.html)
-        datas = parse_page.css('#resultWithPagingSection>ul>li').search('.resultListItemContent')
-        page = 1
-        per_page = datas.count
-        total = parse_page.css('#jobSearchMenuSection').css('.page-list-count').text.split(' ')[2].to_i * per_page
-        last_page = (total.to_f / per_page.to_f).round
-        while page <= last_page
+        if user_ids.present?
+          user_ids.each do |id|
+              designation = User.find_by(id: id).job_search.designation
+              location = User.find_by(id: id).job_search.location
+              jobs = Array.new
+              browser = Watir::Browser.new :chrome
+              browser.goto('https://jobs.derstandard.at/jobsuche')
+              browser.text_field(:id => "jobSearchListInput").set designation
+              browser.text_field(:id => "regionSearchListInput").set location
+              browser.button(:value => 'Jobs suchen').click
+              sleep 5
+              parse_page ||= Nokogiri::HTML(browser.html)
+              datas = parse_page.css('#resultWithPagingSection>ul>li').search('.resultListItemContent')
+              page = 1
+              per_page = datas.count
+              total = parse_page.css('#jobSearchMenuSection').css('.page-list-count').text.split(' ')[2].to_i * per_page
+              last_page = (total.to_f / per_page.to_f).round
+              while page <= last_page
+              pagination_url = "https://jobs.derstandard.at/jobsuche/#{page}"
+              browser.goto(pagination_url)
 
-          pagination_url = "https://jobs.derstandard.at/jobsuche/#{page}"
-          browser.goto(pagination_url)
+              browser.text_field(:id => "jobSearchListInput").set designation
+              browser.text_field(:id => "regionSearchListInput").set location
+              browser.button(:value => 'Jobs suchen').click
+              pagination_url = "https://jobs.derstandard.at/jobsuche/#{page}"
+              browser.goto(pagination_url)
 
-          browser.text_field(:id => "jobSearchListInput").set designation
-          browser.text_field(:id => "regionSearchListInput").set location
-          browser.button(:value => 'Jobs suchen').click
+              pagination_parse_page = Nokogiri::HTML(browser.html)
+              pagination_datas = pagination_parse_page.css('#resultWithPagingSection>ul>li').search('.resultListItemContent')
+              pagination_datas.each do |data|
+                if data.children.css('a').present? && data.attributes['title'].present?
+                url = "jobs.derstandard.at"+ data.children.css('a')[0].attributes['href'].value
+                get_date = find_date(data.attributes['title'].value.gsub('|',',').gsub(',',',').split(','))
 
-          pagination_url = "https://jobs.derstandard.at/jobsuche/#{page}"
-          browser.goto(pagination_url)
+                job_hash = {
+                            title: data.attributes['title'].value.gsub('|',',').gsub(',',',').split(',').first.strip,
+                            url: url,
+                            location: data.css('span.jobadress').text,
+                            company: data.css('span.company').text,
+                            date: get_date,
+                            content: data.css('p')[0].attributes['title'].value,
+                            job_search_type: 0,
+                            user_id: id
+                           }
 
-          pagination_parse_page = Nokogiri::HTML(browser.html)
-          pagination_datas = pagination_parse_page.css('#resultWithPagingSection>ul>li').search('.resultListItemContent')
-          pagination_datas.each do |data|
-            url = "jobs.derstandard.at"+ data.children.css('a')[0].attributes['href'].value
-            #browser.goto(url)
-
-            #parse_job_url ||= Nokogiri::HTML(browser.html)
-            # job_content = if parse_job_url.css('#content-main').css('.content').text.present?
-            #                 parse_job_url.css('#content-main').css('.content').text
-            #               elsif parse_job_url.css('#job-eblinger').text.present?
-            #                 parse_job_url.css('#job-eblinger').text
-            #               elsif parse_job_url.css('#content-main').css('.content-container-inserat').css('.js-embed-container').css('.js-embed-output').css('.jobAd').css('.companyDescription').text.present?
-            #                 parse_job_url.css('#content-main').css('.content-container-inserat').css('.js-embed-container').css('.js-embed-output').css('.jobAd').css('.companyDescription').text.strip
-            #               elsif parse_job_url.css('#content-main').css('.content-container-inserat').css('#job-eblinger').present?
-            #                  parse_job_url.css('#content-main').css('.content-container-inserat').css('#job-eblinger').text
-            #               elsif parse_job_url.css('#content-main').css('.content-container-inserat').css('#job-eblinger').present?
-            #                 parse_job_url.css('#content-main').css('.content-container-inserat').css('#job-eblinger').text
-            #               elsif parse_job_url.css('.jobAd').css('.jobAdContent').text.present?
-            #                 parse_job_url.css('.jobAd').css('.jobAdContent').text
-            #               elsif parse_job_url.css('#jobad').css('.jobad-main-container').text.present?
-            #                  parse_job_url.css('#jobad').css('.jobad-main-container').text
-            #               elsif parse_job_url.css('.inhalt').text.present?
-            #                 parse_job_url.css('.inhalt').text
-            #               elsif parse_job_url.css('.abstand-aussen').text.present?
-            #                 parse_job_url.css('.abstand-aussen').text
-            #               elsif parse_job_url.css('.jobAd').text.present?
-            #                 parse_job_url.css('.jobAd').text
-            #               elsif parse_job_url.css('#job_content_left').text.present?
-            #                 parse_job_url.css('#job_content_left').text
-            #               elsif parse_job_url.css('#job-ims').css('.left').text.present?
-            #                 parse_job_url.css('#job-ims').css('.left').text
-            #               elsif parse_job_url.css('#jobAd').css('.job-body').text.present?
-            #                 parse_job_url.css('#jobAd').css('.job-body').text
-            #               elsif parse_job_url.css('#job-lindlpower').css('.row').text.present?
-            #                 parse_job_url.css('#job-lindlpower').css('.row').text
-            #               elsif parse_job_url.css('#job-santander').css('.job__left-column').text.present?
-            #                 parse_job_url.css('#job-santander').css('.job__left-column').text
-            #               elsif parse_job_url.css('.job-box').text.present?
-            #                 parse_job_url.css('.job-box').text
-            #               elsif parse_job_url.css('.content>ul>li').text.present?
-            #                 parse_job_url.css('.content>ul>li').text
-            #               elsif parse_job_url.css('#content-main').css('.content-container-inserat').css('.js-embed-container').css('#jobAd').text.present?
-            #                 parse_job_url.css('#content-main').css('.content-container-inserat').css('.js-embed-container').css('#jobAd').text.delete!("\n").strip
-            #               elsif parse_job_url.css('#content-main').css('.content-container-inserat').css('.js-embed-container').text.present?
-            #                 c = parse_job_url.css('#content-main').css('.content-container-inserat').css('.js-embed-container').text.delete!("\n").strip
-            #                 coder = HTMLEntities.new
-            #                 cnt = Nokogiri::HTML(coder.decode(c))
-            #                 coder = HTMLEntities.new
-            #                 content = Nokogiri::HTML(coder.decode(cnt.to_html))
-            #                 html = content.to_html
-            #                 doc = Nokogiri::HTML(html)
-            #                 doc.xpath('//style').remove
-            #                 doc.xpath('//img').remove
-            #                 doc.text.delete!("\n")
-            #               elsif browser.iframe(:id, "iframe1").text.present?
-            #                 browser.iframe(:id, "iframe1").text
-            #               else
-            #               end
-            get_date = find_date(data.attributes['title'].value.gsub('|',',').gsub(',',',').split(','))
-
-            job_hash = {
-                        title: data.attributes['title'].value.gsub('|',',').gsub(',',',').split(',').first.strip,
-                        url: url,
-                        location: data.css('span.jobadress').text,
-                        company: data.css('span.company').text,
-                        date: get_date,
-                        content: data.css('p')[0].attributes['title'].value,
-                       }
-            job_hash = job_already_present job_hash
-            jobs << job_hash if job_hash
+                job_hash = job_already_present job_hash
+                jobs << job_hash if job_hash
+              end
+            end
+              page += 1
           end
-          page += 1
-        end
-        parsed_job = jobs.map do |attrs|
-          Job.new(attrs)
-        end
-        job_ids = Job.import(parsed_job)
-        all_job = Job.where(id: job_ids.ids)
-        ids = all_job.select("MIN(id) as id").group(:title).collect(&:id)
-        dup_jobs = all_job.where.not(id: ids)
-        dup_jobs.destroy_all
+            parsed_job = jobs.map do |attrs|
+              Job.new(attrs)
+          end
 
-        if all_job.present?
-          User.all.each do |user|
-            JobMailer.job_email(user, all_job).deliver_now
-           end
+            job_ids = Job.import(parsed_job)
+
+           # if all_job.present?
+           #   User.all.each do |user|
+           #     JobMailer.job_email(user, all_job).deliver_now
+           #    end
+           # end
+           rescue Exception => e
+            puts e
         end
-
-      rescue Exception => e
-        puts e
-
       end
     end
+  end
 
     def job_already_present job_hash
-      result = Job.pluck(:url).include? job_hash[:url]
+      result = Job.pluck(:url).include?(job_hash[:url]) && Job.pluck(:user_id).include?(job_hash[:user_id])
       if result
         false
       else

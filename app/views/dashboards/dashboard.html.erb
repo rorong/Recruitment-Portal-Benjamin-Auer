@@ -24,26 +24,22 @@
         <div class="row">
           <div class="widt100">
             <h3>Update</h3>
-            <div class="form-content-wrap">    
+            <div class="form-content-wrap">
               <center><span class="col-md-6">Designation :
-               <%#= select_tag "designation", options_for_select(@job_search.pluck(:designation).uniq),{name: "designation", class:'custom-select form-control'} %>
-              <%= text_field_tag :designation,@job_search.first.designation, class:"form-control", disabled:true%>
+              <%= text_field_tag :designation,@job_search.designation, class:"form-control", disabled:true%>
                </span>
-               <!--<input class="form-control" value='<%#= @static_job_search.designation %>' disabled/></span><br>-->
-              <span class="col-md-6">Location : 
-                <%#= select_tag "location", options_for_select(@job_search.pluck(:location).uniq),{name: "location", class:'pad custom-select form-control'} %>
-                  <%= text_field_tag :location,@job_search.first.location,class:"form-control",disabled: true %>
+              <span class="col-md-6">Location :
+                  <%= text_field_tag :location,@job_search.location,class:"form-control",disabled: true %>
                 </span>
-                <!--<input class="form-control" value='<%#= @static_job_search.location %>' disabled/></span><br>-->
-                <%if @job_search.any? {|job| job.is_update == false} %>
+                <%if @job_search.is_update == false%>
                   <span ><button type="button" style="margin-top: 20px;" class="update_job_search btn btn-success" >Update</button></span>
-                <% end %>  
+                <% end %>
               </center>
               </div>
           </div>
         </div>
       </div>
-                  
+
     </div>
   </div>
 <%end%>
@@ -59,16 +55,12 @@
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
-        <%= form_for (@job_search.first), :url =>{:action => "update_job_detail"} do |f| %>
-          <div class="modal-body mx-3">
-            <%= f.hidden_field :user_id, { :value => current_user.id } %>
-            <%#= f.hidden_field :job_search_type, { :value => "static" } %>
-            
-              <%#= f.text_field :website_url, class: 'form-control' %><br>
 
-              Designation : <%= f.text_field :designation, class: 'form-control'%><br>
-              Location : <%= f.text_field :location, class: 'form-control'%><br>
-           
+        <%= form_for (@job_search), :url =>{:action => "update_job_detail"} do |f| %>
+          <div class="modal-body mx-3">
+              Designation : <%= f.text_field :designation, class: 'form-control'%>
+              Location : <%= f.text_field :location, class: 'form-control'%>
+              <%= f.hidden_field :is_update, { :value => true } %>
           </div>
           <div class="row d-flex justify-content-center">
             <%=f.submit 'Update', class: 'submit_response col-md-4 btn btn-success',style:"padding:10px 0 10px 0; font-size:25px;" %>
@@ -76,7 +68,7 @@
         <% end %>
       </div>
     </div>
-    
+
   </div>
 <% end %>
 

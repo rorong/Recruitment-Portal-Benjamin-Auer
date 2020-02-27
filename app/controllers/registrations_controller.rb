@@ -4,8 +4,7 @@ class RegistrationsController < Devise::RegistrationsController
   def create_job_search
     user = User.find_by(email: params[:user][:email])
     if user.present?
-      JobSearch.create(user_id: user.id, website_url: 'https://www.karriere.at', designation: 'project-manager', location: 'wien', job_search_type: 'static')
-      JobSearch.create(user_id: user.id, website_url: 'https://jobs.derstandard.at', designation: 'project-manager', location: 'wien', job_search_type: 'dynamic')
+      JobSearch.create(user_id: user.id, designation: 'project-manager', location: 'wien')
     end
   end
 
@@ -42,7 +41,7 @@ class RegistrationsController < Devise::RegistrationsController
             if current_user.update(user_params)
               Sidekiq.set_schedule(current_user.email, { cron: cron_generator( params[:package] , params[:dow] ),
                                                           class: 'EmailWorker',queue:"mailers",args: current_user.id })
-              #cron: cron_generator( params[:package] , params[:dow] )
+
               flash[:notice] = "User details succesfully updated!!!"
               redirect_to user_dashboard_path
             else
@@ -75,11 +74,11 @@ class RegistrationsController < Devise::RegistrationsController
 
 
   def cron_generator(package,day)
-    if (package == "Receive emails daily") 
+    if (package == "Receive emails daily")
       day="*"
       a="*"
     elsif package == "Receive email once a week"
-      a="*"      
+      a="*"
     else
       a="*/15"
     end
