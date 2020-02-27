@@ -9,12 +9,12 @@ class SubscriptionsController < ApplicationController
   end
 
   def create
-    Stripe.api_key = ENV['stripe_secret_key']  
+    Stripe.api_key = ENV['stripe_secret_key']
     if current_user.present? && params[:plan_id].present?
       plan = Plan.find_by(plan_id: params[:plan_id])
 
       if params[:payment_method_id].present?
-        
+        #move it to a model instance method
         customer =  if current_user.stripe_id?
                       Stripe::Customer.retrieve(current_user.stripe_id)
                     else
@@ -40,12 +40,12 @@ class SubscriptionsController < ApplicationController
                           items: [{plan: plan.plan_id}],
                         }) if customer.present?
 
-        Subscription.create(stripe_id: subscription.id, 
+        Subscription.create(stripe_id: subscription.id,
                             user_id: current_user.id,
                             plan_id: plan.id,
                             package_id: params[:package]
-                            ) 
-        
+                            )
+
         current_user.update_attributes(stripe_id: customer.id)
 
         redirect_to user_dashboard_path, notice: "Your subscription was set up successfully!"

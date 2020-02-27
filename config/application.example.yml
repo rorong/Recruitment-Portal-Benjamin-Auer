@@ -1,0 +1,4 @@
+development:
+  stripe_publishable_key: xxxx
+  stripe_secret_key: xxxx
+  stripe_product_id: xxxx
