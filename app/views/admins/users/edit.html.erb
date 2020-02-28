@@ -112,3 +112,25 @@
     </main>
   </div>
 </div>
+
+<script>
+   $(document).ready(function () {
+   $(".edit_user").validate({
+    rules: {
+      'user[email]':{required: true, email: true},
+      'user[password]': {minlength: 6},
+      'user[password_confirmation]': {equalTo: '#user_password'},
+      "user[first_name]" : {required: true},
+      "user[last_name]" : {required: true},
+      "user[answer]" : {required: true}
+    },
+
+    messages: {
+      "user[first_name]": "First Name can't be blank",
+      "user[last_name]": "Last Name can't be blank",
+      "user[email]": {required: "Email can't be blank", email: "You must enter a valid email address"},
+      'user[password_confirmation]': {equalTo: "Password don't match"}
+    }
+   });
+  });
+</script>
