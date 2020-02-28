@@ -1,5 +1,6 @@
 class RegistrationsController < Devise::RegistrationsController
   # after_action :create_job_search, only: [:create]
+  before_action :authenticate_user!
 
   #Move in model callback
   # def create_job_search
@@ -14,7 +15,9 @@ class RegistrationsController < Devise::RegistrationsController
 
     if user.save
       #move it model callback
-      user.answer = security_questions.find_index(params[:security_question]).to_s+params.dig(:user, :answer)
+      #user.answer = security_questions.find_index(params[:security_question]).to_s+params.dig(:user, :answer)
+      user.answer = params.dig(:user, :answer)
+
 
       #Remove it there should be only one call to db
       user.save

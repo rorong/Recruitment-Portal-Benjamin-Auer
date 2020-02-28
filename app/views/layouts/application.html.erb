@@ -24,10 +24,10 @@
         <div class= "<%= admin_signed_in? ? '' : 'container'%>">
 
           <% if notice %>
-            <p class="alert alert-success"><%= notice %><button type="button" class="close" data-dismiss="alert">&times;</button></p>
+            <p class="alert alert-success <%= admin_signed_in? ? 'admin_flash_msg' : ''%>"><%= notice %><button type="button" class="close" data-dismiss="alert">&times;</button></p>
           <% end %>
           <% if alert %>
-            <p class="alert alert-danger"><%= alert %><button type="button" class="close" data-dismiss="alert">&times;</button></p>
+            <p class="alert alert-danger <%= admin_signed_in? ? 'admin_flash_msg' : ''%>"><%= alert %><button type="button" class="close" data-dismiss="alert">&times;</button></p>
           <% end %>
 
           <%= yield %>
@@ -36,3 +36,9 @@
       <%= render partial: 'layouts/footer'%>
     </body>
 </html>
+
+<style>
+  .admin_flash_msg{
+    padding-left: 234px;
+  }
+</style>
