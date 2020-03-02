@@ -4,6 +4,7 @@ class DynamicScrapWorker
   sidekiq_options queue: "dynamic_scrapper_jobs"
 
   def perform
-    DynamicScraperService.dynamic_scrap(User.pluck(:id))
+    #DynamicScraperService.dynamic_scrap(User.pluck(:id))
+    DynamicScraperService.dynamic_scrap
   end
 end
