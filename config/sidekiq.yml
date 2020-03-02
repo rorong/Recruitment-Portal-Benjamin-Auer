@@ -15,7 +15,7 @@
 #   # auto_renewal_subscriptions:
 #   #   cron: '59 23 * * * *'
 #   #   class: SubscriptionAutoRenewal
-  
+
 
   # auto_renewal_subscriptions:
   #   cron: '59 23 * * * *'
@@ -28,10 +28,10 @@
     cron: '0 0 0 * * *'
     class: DynamicScrapWorker
   daily_email_worker:
-    cron: "0 0 4 * * *" #Every Day at 4am assuming scrapping will take 3-4 hours 
+    cron: "0 0 4 * * *" #Every Day at 4am assuming scrapping will take 3-4 hours
     class: DailyEmailWorker
   weekly_email_worker:
-    every: ["2m"] #"0 0 4 * * MON"
+    every: ["1w"] #"0 0 4 * * MON"
     class: WeeklyEmailWorker
   two_week_email_worker:
     every: ["2w"]

@@ -53,13 +53,13 @@
         </div>
         <div class="col-md-6">
           <%= f.label :dont_include_job %>
-          <%= text_field_tag :not_include_job1, "#{f.object.not_include_job1}", class: 'form-control' %>
-          <%= text_field_tag :not_include_job2, "#{f.object.not_include_job2}", class: 'form-control' %>
-          <%= text_field_tag :not_include_job3, "#{f.object.not_include_job3}", class: 'form-control' %>
+          <%= f.text_field :not_include_job1, class: 'form-control' %>
+          <%= f.text_field :not_include_job2, class: 'form-control' %>
+          <%= f.text_field :not_include_job3, class: 'form-control' %>
         </div>
       </div>
     </div>
-    
+
     <div class="form-group">
       <%= f.submit "Update", id: 'edit_user_details', class: "btn btn-success" %>
     </div>
@@ -107,7 +107,7 @@
   //     }
   //   }
   // });
-   $(document).ready(function () { 
+   $(document).ready(function () {
    $("#edit_user").validate({
     rules: {
       'user[email]':{required: true, email: true},
@@ -117,14 +117,14 @@
       "user[last_name]" : {required: true},
       "user[answer]" : {required: true}
     },
-    
-    
+
+
     messages: {
       "user[first_name]": "First Name can't be blank",
       "user[last_name]": "Last Name can't be blank",
       "user[email]": {required: "Email can't be blank", email: "You must enter a valid email address"},
       'user[password_confirmation]': {equalTo: "Password don't match"}
     }
-   });  
-  }); 
+   });
+  });
 </script>

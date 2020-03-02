@@ -32,9 +32,9 @@ class RegistrationsController < Devise::RegistrationsController
   end
 
   def update_user_details
-    params.dig(:user, :answer)
+    answer_param = params.dig(:user, :answer)
     if params.dig(:user, :answer).present?
-      if params.dig(:user, :answer) == current_user.answer.sub(current_user.answer.first,"")
+      if answer_param == current_user.answer
         current_user.update(user_params)
         flash[:notice] = "User details succesfully updated!!!"
         redirect_to user_dashboard_path
