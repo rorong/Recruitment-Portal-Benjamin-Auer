@@ -4,20 +4,20 @@
     <p class="card-title text-uppercase text-center" style="font-size:2rem;">Selected Package</p>
     <div class="row">
       <% package = current_user.package %>
-       <div class="col-lg-offset-4 col-lg-4" style="padding:5px;">
+       <div class="col-lg-offset-4 col-lg-4" style="padding:5px;width: 500px; margin: 0 auto;text-align: center;">
         <div class="card mb-5 mb-lg-0">
           <div class="card-body">
             <h5 class="card-title text-muted text-uppercase text-center"><%=package.name%></h5>
-            
+
             <h6 class="card-price text-center">$<%=package.plan.display_price%><span class="period"> <%=pluralize(package.plan.interval_count,package.plan.interval)%></span></h6>
             <hr>
-            <ul class="fa-ul">
-              <li><span class="fa-li"><i class="fas fa-check"></i></span>Pay $<%=package.plan.display_price%> every <%=pluralize(package.plan.interval_count,package.plan.interval)%></li>
-              <li><span class="fa-li"><i class="fas fa-check"></i></span><%=package.interval%> emails.</li>
+            <ul class="fa-ul " style="text-align: justify;">
+              <li><span class="fa-li"><i class="fa fa-id-badge" aria-hidden="true"></i></span>Pay $<%=package.plan.display_price%> every <%=pluralize(package.plan.interval_count,package.plan.interval)%></li>
+              <li><span class="fa-li "><i class="fa fa-envelope-open" aria-hidden="true"></i></span><%=package.interval%> emails.</li>
                <%unless Package.intervals[package.interval]==0 %>
-              <li><span class="fa-li"><i class="fas fa-check"></i></span>Emails will be sent on Mondays.</li>
+              <li><span class="fa-li"><i class="fa fa-envelope-open-o" aria-hidden="true"></i></span>Emails will be sent on Mondays.</li>
               <% else %>
-            <li><span class="fa-li"><i class="fas fa-check"></i></span>Emails will be sent everyday.</li>
+            <li><span class="fa-li"><i class="fa fa-envelope-open-o" aria-hidden="true"></i></span>Emails will be sent everyday.</li>
             <%end%>
             </ul>
             <%= link_to 'Cancel Subscription', cancel_subscription_path, class: "btn btn-block btn-danger text-uppercase" %>
@@ -30,7 +30,7 @@
 
     <%# unless Package.intervals[package.interval] == 0 %>
       <!-- <div class="col-md-12" >
-          <div class="form-group">    
+          <div class="form-group">
             <p class="card-title text-uppercase text-center" style="font-size:1rem;">Receive Emails:</p>
             <%#= form_tag(email_package_path, :method => :post, :multipart => true) do %>
             <%#= select_tag :package, options_for_select(User.packages), {class:'custom-select'} %>
@@ -66,9 +66,9 @@
                 <input name="dow" type="radio" value=6 id="dow7">
                 <label for="dow7">S</label>
               </div>
-            </div> 
+            </div>
           </div>
-                
+
           <center >
             <div class="panel-footer">
               <%#= submit_tag "Set", class: "btn btn-success" %>
@@ -86,23 +86,23 @@
               <%#= link_to "Change", email_package_path(package: 0) ,method: :post , class:"btn btn-danger" %>
             </div>
           </center>
-          </div>        
+          </div>
         <%#end%>
       </div>
     </div> -->
   </div>
-</div> 
+</div>
 <%end %>
 
 <% if @subscription == nil %>
-  
-<!-- 
+
+<!--
 <div class="jumbotron pricing py-5">
   <div class="container">
     <p class="card-title text-uppercase text-center" style="font-size:2rem;">Select Package</p>
     <div class="row">
       <div class="col-md-12" >
-            <div class="form-group">    
+            <div class="form-group">
               <p class="card-title text-uppercase text-center" style="font-size:1rem;">Receive Emails:</p>
               <%#= form_tag(payment_form_path, :method => :get, :multipart => true) do %>
               <%#= select_tag :package, options_for_select(Package.pluck(:name)), {class:'custom-select',  prompt: "Choose one"} %>
@@ -138,7 +138,7 @@
                   <input name="dow" type="radio" value=6 id="dow7">
                   <label for="dow7">S</label>
                 </div>
-              </div> 
+              </div>
             </div>
           </div>
           </div> -->
@@ -154,17 +154,18 @@
             <h6 class="card-price text-center">$<%=package.plan.display_price%><span class="period"> <%=pluralize(package.plan.interval_count,package.plan.interval)%></span></h6>
             <hr>
             <ul class="fa-ul">
-              <li><span class="fa-li"><i class="fas fa-check"></i></span>Pay $<%=package.plan.display_price%> every <%=pluralize(package.plan.interval_count,package.plan.interval)%></li>
-              <li><span class="fa-li"><i class="fas fa-check"></i></span><%=package.interval%> emails.</li>
-              <%unless Package.intervals[package.interval]==0 %> 
-              <li><span class="fa-li"><i class="fas fa-check"></i></span>Emails will be sent on Mondays.</li>
-            </ul>
+              <li><span class="fa-li"><i class="fa fa-id-badge" aria-hidden="true"></i></span>Pay $<%=package.plan.display_price%> every <%=pluralize(package.plan.interval_count,package.plan.interval)%></li>
+              <li><span class="fa-li"><i class="fa fa-envelope-open" aria-hidden="true"></i></span><%=package.interval%> emails.</li>
+              <%unless Package.intervals[package.interval]==0 %>
+              <li><span class="fa-li"><i class="fa fa-envelope-open-o" aria-hidden="true"></i></span>Emails will be sent on Mondays.</li>
+
             <% else %>
-            <li><span class="fa-li"><i class="fas fa-check"></i></span>Emails will be sent everyday.</li>
+            <li><span class="fa-li"><i class="fa fa-envelope-open-o" aria-hidden="true"></i></span>Emails will be sent everyday.</li>
             <%end%>
             <center>
             <%= link_to 'Pay', payment_form_path(plan_is: package.plan.plan_id,package:package.id), class: "btn btn-block btn-primary text-uppercase" %>
           </center>
+          </ul>
           </div>
         </div>
       </div>
@@ -178,6 +179,7 @@
 
 
 <% if @job_search.present? %>
+  <div class="container">
   <div class="padding-top">
     <div class="well padding-top" style="background-color:#f2f2f2">
       <span style="font-size:3.5em;" class="glyphicon glyphicon-th-list"></span>
@@ -186,19 +188,20 @@
           <div class="widt100">
             <h3>Update</h3>
             <div class="form-content-wrap">
-              <center><span class="col-md-6">Designation :
+              <span class="col-md-6">Designation :
               <%= text_field_tag :designation,@job_search.designation, class:"form-control", disabled:true%>
                </span>
               <span class="col-md-6">Location :
                   <%= text_field_tag :location,@job_search.location,class:"form-control",disabled: true %>
                 </span>
                 <%if @job_search.is_update == false%>
+                 <center>
                   <span ><button type="button" style="margin-top: 20px;" class="update_job_search btn btn-success" >Update</button></span>
                 <% end %>
               </center>
             </div>
           </div>
-        </div>                 
+        </div>
       </div>
     </div>
   </div>
@@ -262,7 +265,7 @@
 //         hiddenInput.setAttribute('type', 'hidden');
 //         hiddenInput.setAttribute('name', 'stripeToken');
 //         hiddenInput.setAttribute('value', token.id);
-//         //creating an <input type="hidden" name="stripeToken" value="<id>"/>. We will need this information in the next steps to link a user to his card 
+//         //creating an <input type="hidden" name="stripeToken" value="<id>"/>. We will need this information in the next steps to link a user to his card
 //         form.appendChild(hiddenInput);
 //         //adding this input when we use a form.
 //         form.submit();
@@ -284,22 +287,22 @@ $(document).on('ready turbolinks:load', function() {
           $("#weekly").fadeIn('fast');
           $(".hidden-option").fadeIn('fast');
 
-        } 
-        else 
+        }
+        else
         if($("#package").val() == "Daily"){
           $("#twoweek").fadeOut('fast');
           $("#weekly").fadeOut('fast');
-          $("#daily").fadeIn('fast');   
-          $(".hidden-option").fadeOut('fast');       
-        }   
-        else      
+          $("#daily").fadeIn('fast');
+          $(".hidden-option").fadeOut('fast');
+        }
+        else
         if($("#package").val() == "Every 2 Weeks"){
           $("#weekly").fadeOut('fast');
           $("#daily").fadeOut('fast');
           $("#twoweek").fadeIn('fast');
           $(".hidden-option").fadeIn('fast');
-          
-        }  
+
+        }
         else{
           $("#weekly").fadeOut('fast');
           $("#daily").fadeOut('fast');
@@ -307,7 +310,7 @@ $(document).on('ready turbolinks:load', function() {
           $(".hidden-option").fadeOut('fast');
 
         }
-    });        
+    });
 });
 
 
@@ -421,17 +424,17 @@ $(document).on('ready turbolinks:load', function() {
           margin: 0 auto;
           text-align: center;
           padding: 0 0 0 5px;
-        
+
         .dowPickerOption {
             display: inline-block;
-          
+
         h1{
 
         }
         input[type=radio] {
             display: none;
             }
-          
+
         label {
             font-size: 50px;
             color: #A7A7A7;

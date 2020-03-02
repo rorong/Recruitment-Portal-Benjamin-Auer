@@ -58,8 +58,7 @@ class ScraperService
             Job.import(parsed_job)
           end
         end
-      rescue Exception => e
-        puts e
+      rescue Exception
       end
     end
 
