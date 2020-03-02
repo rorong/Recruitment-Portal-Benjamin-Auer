@@ -3,7 +3,7 @@ class JobMailer < ApplicationMailer
 
   def job_email(user)
     @user= user
-    @jobs = Job.all
+    @jobs = @user.jobs
     # include_job = user.include_job1? || user.include_job2? || user.include_job3?
 
     # not_include_job = user.not_include_job1? || user.not_include_job2? || user.not_include_job3?

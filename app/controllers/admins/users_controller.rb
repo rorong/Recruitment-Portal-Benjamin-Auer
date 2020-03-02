@@ -60,9 +60,9 @@ class Admins::UsersController < ApplicationController
       )
       plan=Plan.find_by(plan_id: params[:id])
       plan.update(name:params[:plan_name])
-      redirect_to admins_users_path, notice: "Plan successfully updated!!!"
+      redirect_to admins_plan_path, notice: "Plan successfully updated!!!"
     else
-      redirect_to admins_users_path, notice: "No plan found!!!"
+      redirect_to admins_plan_path, notice: "No plan found!!!"
     end
   end
 
@@ -113,10 +113,10 @@ class Admins::UsersController < ApplicationController
   end
 
   def update
-    params.dig(:user, :answer)
+    answer_param = params.dig(:user, :answer)
     current_user = User.find_by(email: params.dig(:user, :email))
     if current_user.present? && params.dig(:user, :answer).present?
-      if params.dig(:user, :answer) == current_user.answer.sub(current_user.answer.first,"")
+      if params.dig(:user, :answer) == current_user.answer
         current_user.update(user_params)
         flash[:notice] = "User details succesfully updated!!!"
         redirect_to admins_users_path

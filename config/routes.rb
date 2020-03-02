@@ -39,7 +39,6 @@ Rails.application.routes.draw do
   get '/card/new' => 'billings#new_card', as: :add_payment_method
   post '/card' => 'billings#create_card', as: :create_payment_method
   get '/success' => 'billings#success', as: :success
-  get '/fetch_plan' => 'subscriptions#fetch_plan', as: :fetch_plan
   get '/payment_form' => 'subscriptions#payment_form', as: :payment_form
   get '/send_job_mail' => 'subscriptions#send_job_mail', as: :send_job_mail
   get '/subscription_dashboard' => 'subscriptions#subscription_dashboard', as: :subscription_dashboard

@@ -3,31 +3,20 @@ require 'sidekiq-scheduler'
 class MonthlyEmailWorker
   include Sidekiq::Worker
   sidekiq_options retry: true
-  sidekiq_options queue: "mailers"
+  sidekiq_options queue: "monthly_job_notification"
 
   def perform
-  	packages=Package.where(interval: 3)
-  	
-  	unless packages.blank?
-	  	
-	  	packages.each do |package|
-	  		
-	  		users=package.users
-
-	  		unless users.blank?
-
-	  			users.each do |user|
-
-	  				JobMailer.job_email(user).deliver_now if user.subscription.present?
-  
-
-	  			end
-
-	  		end
-
-	  	end
-  	
-  	end
+    packages=Package.where(interval: 3)
+    unless packages.blank?
+      packages.each do |package|
+        users=package.users
+        unless users.blank?
+          users.each do |user|
+            JobMailer.job_email(user).deliver_now if user.subscription.present?
+          end
+        end
+      end
+    end
   end
 
 end

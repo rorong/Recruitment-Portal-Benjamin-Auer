@@ -183,21 +183,25 @@
           </header>
           <main>
             <h3>Dear, <%= @user.first_name %></h3>
-            <p>Here are the jobs which matches your criteria. Please check below: </p>
-            <table class = "table-striped">
-              <tr>
-                <th>Title</th>
-                <th>Company</th>
-                <th>Url</th>
-              </tr>
-              <% @jobs.each do |job| %>
+            <%unless @jobs.blank?%>
+              <p>Here are the jobs which matches your criteria. Please check below: </p>
+              <table class = "table-striped">
                 <tr>
-                  <td><%= job.title %></td>
-                  <td><%= job.try(:company) %></td>
-                  <td><%= link_to "#{job.url}", "#{job.url}", target: '_blank' %></td>
+                  <th>Title</th>
+                  <th>Company</th>
+                  <th>Url</th>
                 </tr>
-              <% end %>
-            </table>
+                <% @jobs.each do |job| %>
+                  <tr>
+                    <td><%= job.title %></td>
+                    <td><%= job.try(:company) %></td>
+                    <td><%= link_to "#{job.url}", "#{job.url}", target: '_blank' %></td>
+                  </tr>
+                <% end %>
+              </table>
+            <%else%>
+              <p>Currently there are no jobs available that matches your criteria!</p>
+            <%end%>  
           </main>
           <footer>
           </footer>
