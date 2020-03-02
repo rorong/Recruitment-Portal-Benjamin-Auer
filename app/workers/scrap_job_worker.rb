@@ -4,6 +4,6 @@ class ScrapJobWorker
   sidekiq_options queue: "default"
 
   def perform
-			ScraperService.scrap_job(User.pluck(:id))
+			ScraperService.scrap_job
   end
 end

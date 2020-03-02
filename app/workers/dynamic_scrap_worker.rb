@@ -5,7 +5,7 @@ class DynamicScrapWorker
 
 
   def perform
-    	DynamicScraperService.dynamic_scrap(User.pluck(:id))
+    	DynamicScraperService.dynamic_scrap
   end
 
 end

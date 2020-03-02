@@ -27,7 +27,7 @@ class User < ApplicationRecord
   end
 
   def create_job_search
-    JobSearch.create(user_id: self.id, designation: 'project-manager', location: 'wien')
+    JobSearch.create(user_id: self.id, designation: 'project manager', location: 'wien')
   end
 
 end
