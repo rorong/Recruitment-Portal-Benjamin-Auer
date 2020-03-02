@@ -10,7 +10,7 @@ class Admins::UsersController < ApplicationController
   def update_email
     plan=Plan.find(params[:id])
     package=Package.find(params[:package])
-    
+
     package.update(name:params[:package_name] , plan_id:plan.id , interval: params[:interval].to_i)
     redirect_to admins_email_path
   end
@@ -23,7 +23,7 @@ class Admins::UsersController < ApplicationController
   end
 
   def create_plan
-    
+
     product_id=ENV['stripe_product_id']
     plan= Stripe::Plan.create({
             amount: (params[:amount].to_i*100).to_s,
@@ -34,9 +34,9 @@ class Admins::UsersController < ApplicationController
             product: product_id,
           })
 
-    Plan.create(plan_id: plan.id,   
-                name: params[:plan_name] , 
-                display_price: params[:amount] , 
+    Plan.create(plan_id: plan.id,
+                name: params[:plan_name] ,
+                display_price: params[:amount] ,
                 interval:params[:interval],
                 interval_count:params[:interval_count])
 
@@ -53,7 +53,7 @@ class Admins::UsersController < ApplicationController
 
   def update_plan
     if params[:id].present?
-      
+
       Stripe::Plan.update(
         params[:id],
         {nickname: params[:plan_name]},
@@ -68,7 +68,7 @@ class Admins::UsersController < ApplicationController
 
   def delete_plan
     if params[:id].present?
-      
+
       @plan = Stripe::Plan.retrieve(params[:id])
       @plan.delete if @plan.present?
       Plan.find_by(plan_id: params[:id]).destroy
@@ -90,7 +90,8 @@ class Admins::UsersController < ApplicationController
   def create
       user = User.new(user_params)
     if user.save
-      user.answer = security_questions.find_index(params[:security_question]).to_s+params.dig(:user, :answer)
+      #user.answer = security_questions.find_index(params[:security_question]).to_s+params.dig(:user, :answer)
+      user.answer = params.dig(:user, :answer)
       user.save
       flash[:notice] = "User created."
     else
@@ -112,40 +113,19 @@ class Admins::UsersController < ApplicationController
   end
 
   def update
-    if  params[:id].present? && params[:security_question].present?
-      sq = SecurityQuestion.find_by(question: params[:security_question])
-      current_user = User.find_by(id: params[:id])
-      if current_user.security_questions.pluck(:question).include? sq.question
-        if params[:answer].present?
-          saved_anwer = current_user.security_questions.find_by(question: params[:security_question])
-          if saved_anwer.present? && saved_anwer.answer.try(:answer).try(:downcase) == params[:answer]
-            current_user.gender = params[:gender]
-            current_user.include_job1 = params[:include_job1]
-            current_user.include_job2 = params[:include_job2]
-            current_user.include_job3 = params[:include_job3]
-            current_user.not_include_job1 = params[:not_include_job1]
-            current_user.not_include_job2 = params[:not_include_job2]
-            current_user.not_include_job3 = params[:not_include_job3]
-            if current_user.update(user_params)
-              flash[:notice] = "User details succesfully updated!!!"
-              redirect_to admins_users_path
-            else
-              redirect_to edit_admins_user_path
-            end
-          else
-            flash[:alert] = "Answer does not match!!!"
-            redirect_to edit_admins_user_path
-          end
-        else
-          flash[:alert] = "Please enter the answer!!!"
-          redirect_to edit_admins_user_path
-        end
+    params.dig(:user, :answer)
+    current_user = User.find_by(email: params.dig(:user, :email))
+    if current_user.present? && params.dig(:user, :answer).present?
+      if params.dig(:user, :answer) == current_user.answer.sub(current_user.answer.first,"")
+        current_user.update(user_params)
+        flash[:notice] = "User details succesfully updated!!!"
+        redirect_to admins_users_path
       else
-        flash[:alert] = "Please select your security question!!!"
+        flash[:alert] = "Answer does not match!!!"
         redirect_to edit_admins_user_path
       end
     else
-      flash[:alert] = "Please select the security question!!!"
+      flash[:alert] = "Please enter the answer!!!"
       redirect_to edit_admins_user_path
     end
   end
@@ -166,10 +146,10 @@ class Admins::UsersController < ApplicationController
   end
 
   def interval_generator(interval,interval_count)
-    if interval == "week" 
+    if interval == "week"
       a=interval_count
     elsif interval == "month"
-      a=4*interval_count    
+      a=4*interval_count
     elsif interval == "year"
       a=52
     else
@@ -177,7 +157,7 @@ class Admins::UsersController < ApplicationController
     end
       a=a.to_s+"w"
   end
-  
+
   def first_mail
     date  = DateTime.parse("Sunday")
     delta = date > DateTime.now ? 0 : 7

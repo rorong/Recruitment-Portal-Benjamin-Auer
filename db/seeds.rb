@@ -64,7 +64,12 @@
 #   product: product.id,
 # })
 
-product_id=ENV['stripe_product_id']
+product_id = Stripe::Product.create({
+        name: 'Job Scraper',
+        type: 'service',
+        description: 'Email package subscription plan'
+      }).id
+
 ['monthly', 'quaterly', 'yearly'].each do|plan_name|
   case plan_name
     when 'monthly'

@@ -15,15 +15,14 @@
               <%= label_tag :package_name %>
               <%= text_field_tag :package_name, "#{@package.name}", class: "form-control" %>
             </div>
-
             <div class="form-group">
               <%= label_tag :interval %>
-               <%= select_tag :interval, options_for_select(Package.intervals), {class:'custom-select',  prompt: "Choose one"} %>
+               <%= select_tag :interval, options_for_select(Package.intervals.keys, @package.try(:interval)), {class:'custom-select'} %>
             </div>
 
             <div class="form-group">
               <%= label_tag :payment_plan %>
-               <%= select_tag :payment_plan, options_for_select(Plan.pluck(:name)), {class:'custom-select',  prompt: "Choose one"} %>
+               <%= select_tag :payment_plan, options_for_select(Plan.pluck(:name), @package.try(:plan).try(:name)), {class:'custom-select'} %>
             </div>
 
 
