@@ -31,7 +31,6 @@ class User < ApplicationRecord
   end
 
   def create_subscription(payment_method_id, plan, package)
-    Stripe.api_key = ENV['stripe_secret_key']
     error = nil
     success = nil
     begin
@@ -42,14 +41,14 @@ class User < ApplicationRecord
                       payment_method: payment_method_id,
                       email: self.email,
                       name: self.first_name,
-                       address: {
-                                    city: "Delhi",
-                                    country: "United States",
-                                    line1: "asdaad",
-                                    line2: "nll",
-                                    postal_code: "10001",
-                                    state: "U.S"
-                                  },
+                      address: {
+                                  city: "Delhi",
+                                  country: "United States",
+                                  line1: "asdaad",
+                                  line2: "nll",
+                                  postal_code: "10001",
+                                  state: "U.S"
+                            },
                       invoice_settings: {
                         default_payment_method: payment_method_id,
                       },
@@ -71,6 +70,22 @@ class User < ApplicationRecord
       error = e.message
     end
     return error, success
+  end
+
+  def cancel_subscription
+    error = nil
+    success = nil    
+    begin
+      stripe_subscription = Stripe::Subscription.retrieve(subscription.stripe_id)
+      response = stripe_subscription.delete
+      if response.present? && response.status.eql?('canceled')
+        subscription.destroy
+        success = true
+      end
+    rescue Exception => e
+      error = e.message
+    end
+    return error, success 
   end
 
 end
