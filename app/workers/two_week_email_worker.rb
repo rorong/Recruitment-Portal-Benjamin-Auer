@@ -5,17 +5,16 @@ class TwoWeekEmailWorker
   sidekiq_options retry: true
   sidekiq_options queue: "weekly_2_job_notification"
 
-  def perform
-    packages=Package.where(interval: 2)
-    unless packages.blank?
-      packages.each do |package|
-        users=package.users
-        unless users.blank?
-          users.each do |user|
-            JobMailer.job_email(user).deliver_now if user.subscription.present?
-          end
-        end
-      end
+  def perform(*args)
+    user = User.find_by(id: args[0])
+    if user.present? && user.subscription.present?
+      JobMailer.job_email(user).deliver_now
+      schedule_next_two_weekly_job_email(user.id)
     end
+  end
+
+  def schedule_next_two_weekly_job_email(user_id)
+    next_start_at = 1.weeks.from_now.next_occurring(Date::DAYNAMES[0].downcase.to_sym).end_of_day + 4.hours
+    TwoWeekEmailWorker.perform_at( next_start_at, user_id )
   end
 end

@@ -27,21 +27,21 @@
   dynamic_scrap_worker:
     cron: '0 0 0 * * *'
     class: DynamicScrapWorker
-  daily_email_worker:
-    cron: "0 0 4 * * *" #Every Day at 4am assuming scrapping will take 3-4 hours
-    class: DailyEmailWorker
-  weekly_email_worker:
-    every: ["1w"] #"0 0 4 * * MON"
-    class: WeeklyEmailWorker
-  two_week_email_worker:
-    every: ["2w"]
-    class: TwoWeekEmailWorker
-  monthly_email_worker:
-    every: ["4w"] #"0 0 4 1 * MON"
-    class: MonthlyEmailWorker
-  yearly_email_worker:
-    every: ["52w"]
-    class: YearlyEmailWorker
+  # daily_email_worker:
+  #   cron: "0 0 4 * * *" #Every Day at 4am assuming scrapping will take 3-4 hours
+  #   class: DailyEmailWorker
+  # weekly_email_worker:
+  #   every: ["1m"] #"0 0 4 * * MON"
+  #   class: WeeklyEmailWorker
+  # two_week_email_worker:
+  #   every: ["2w"]
+  #   class: TwoWeekEmailWorker
+  # monthly_email_worker:
+  #   every: ["4w"] #"0 0 4 1 * MON"
+  #   class: MonthlyEmailWorker
+  # yearly_email_worker:
+  #   every: ["52w"]
+  #   class: YearlyEmailWorker
 
 
     # daily_email_worker:
