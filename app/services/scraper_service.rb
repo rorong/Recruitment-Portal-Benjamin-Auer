@@ -16,55 +16,78 @@ class ScraperService
         #   puts ">>>>>>>>>>>>>>>location not present"
         #   parse_page = Nokogiri::HTML(open("https://www.karriere.at/jobs/project-manager/wien"))
         # end
-        parse_page = Nokogiri::HTML(open("https://www.karriere.at/jobs/"))
-        jobs = Array.new
 
-        datas =  parse_page.css('div.m-jobsListItem__dataContainer')
-        if parse_page.css('div.m-jobsListItem__dataContainer').present?
-          page = 1
-          per_page = datas.count
-          total = parse_page.css('div.m-pagination').css('div.m-pagination__inner').css('span.m-pagination__meta').text.split(' ')[2].to_i * per_page
+        # previous_temp_jobs_count = TempJob.count
+        # if previous_temp_jobs_count > 0
+        #   TempJob.in_batches(of: previous_temp_jobs_count).delete_all
+        # end
 
-          last_page = (total.to_f / per_page.to_f).round
+        uniq_desiginations = JobSearch.pluck(:designation).uniq
+        unless uniq_desiginations.blank?
+          parsed_job = []
+          uniq_desiginations.each do |designation|
+            uniq_locations = JobSearch.where(designation: designation).pluck(:location).uniq
+            unless uniq_locations.blank?
+              uniq_locations.each do |location|
+                formatted_location = location.gsub(" ","")
+                formatted_designation = designation.gsub(" ","")
+                #Job Parsing based on unique location and desigination
+                parse_page = Nokogiri::HTML(open("https://www.karriere.at/jobs/#{formatted_designation}/#{formatted_location}"))
+                jobs = Array.new
 
-          while page <= last_page
-            pagination_url = page > 1 ? "https://www.karriere.at/jobs?page=#{page}" : "https://www.karriere.at/jobs/"
-            pagination_parse_page = Nokogiri::HTML(open(pagination_url))
-            pagination_datas =  pagination_parse_page.css('div.m-jobsListItem__dataContainer')
-            pagination_datas.each do |data|
-              url = data.css('h2.m-jobsListItem__title').css('a')[0].attributes['href'].value
-              job_url = HTTParty.get(url)
-              job_hash = {
-                        title: data.css('h2.m-jobsListItem__title').text.strip,
-                        company: data.css('div.m-jobsListItem__meta').css('div.m-jobsListItem__company').text.strip,
-                        url: data.css('h2.m-jobsListItem__title').css('a')[0].attributes['href'].value.strip,
-                        location:  (data.css('div.m-jobsListItem__meta').css('div.m-jobsListItem__wrap').css('ul.m-jobsListItem__locations').css('li.m-jobsListItem__location').css('a')[0].attributes['data-location'].value.strip.downcase rescue nil),
-                        date: data.css('div.m-jobsListItem__meta').css('div.m-jobsListItem__wrap').css('span.m-jobsListItem__date')[0].text.gsub("am","").strip,
-                        content: data.css('p.m-jobsListItem__snippet').text.strip,
-                        job_search_type: 1,
-                        }
-              puts ">>>>>>>>>>>>> #{job_hash}"
-              job_hash = job_already_present job_hash
-              jobs << job_hash if job_hash
+                datas =  parse_page.css('div.m-jobsListItem__dataContainer')
+                if parse_page.css('div.m-jobsListItem__dataContainer').present?
+                  page = 1
+                  per_page = datas.count
+                  total = parse_page.css('div.m-pagination').css('div.m-pagination__inner').css('span.m-pagination__meta').text.split(' ')[2].to_i * per_page
+
+                  last_page = (total.to_f / per_page.to_f).round
+
+                  while page <= 2
+                    pagination_url = page > 1 ? "https://www.karriere.at/jobs/#{formatted_designation}/#{formatted_location}?page=#{page}" : "https://www.karriere.at/jobs/#{formatted_designation}/#{formatted_location}"
+                    pagination_parse_page = Nokogiri::HTML(open(pagination_url))
+                    pagination_datas =  pagination_parse_page.css('div.m-jobsListItem__dataContainer')
+                    pagination_datas.each do |data|
+                      url = data.css('h2.m-jobsListItem__title').css('a')[0].attributes['href'].value
+                      job_url = HTTParty.get(url)
+
+                      job_hash = {
+                                title: data.css('h2.m-jobsListItem__title').text.strip,
+                                company: data.css('div.m-jobsListItem__meta').css('div.m-jobsListItem__company').text.strip,
+                                url: data.css('h2.m-jobsListItem__title').css('a')[0].attributes['href'].value.strip,
+                                location:  (data.css('div.m-jobsListItem__meta').css('div.m-jobsListItem__wrap').css('ul.m-jobsListItem__locations').css('li.m-jobsListItem__location').css('a')[0].text.strip.downcase rescue nil),
+                                date: data.css('div.m-jobsListItem__meta').css('div.m-jobsListItem__wrap').css('span.m-jobsListItem__date')[0].text.gsub("am","").strip,
+                                content: data.css('p.m-jobsListItem__snippet').text.strip,
+                                job_search_type: 1
+                          }
+                      puts ">>>>>>>>>>>>> #{job_hash}"
+                      job_hash = job_already_present job_hash
+                      jobs << job_hash if job_hash
+                    end
+                    page += 1
+                    puts ">>>>>>>>>>>>>>>>  #{page}"
+                  end
+                  # Seeding jobs for users
+                  user_job_searches = JobSearch.where("location = ? AND designation = ?", location, designation)
+                  uniq_user_ids = user_job_searches.pluck(:user_id).uniq
+                  uniq_user_ids.each do |user_id|
+                    parsed_job << jobs.map do |attrs|
+                      attrs.merge!(user_id: user_id)
+                      Job.new(attrs)
+                    end
+                    #Job.import(parsed_job)
+                  end
+                end
+              end
             end
-            page += 1
-            puts ">>>>>>>>>>>>>>>>  #{page}"
+          end
+          if parsed_job.count > 0
+            parsed_job.flatten!
+            Job.import(parsed_job)
           end
         end
-        parsed_job = jobs.map do |attrs|
-          TempJob.new(attrs)
-        end
-        TempJob.import(parsed_job)
-        User.all.each do |u|
-
-          #relevent_jobs = TempJob.where(location: u.job_search.location)
-          relevent_jobs = TempJob.where(location: u.job_search.location).select{|x| x.title.downcase.include?(u.job_search.designation)}
-          relevent_jobs.each do |rj|
-            u.jobs.create(title: rj.title, company: rj.company, url: rj.url, location: rj.location, date: rj.date, content: rj.content, user_id: u.id, job_search_type: 1)
-          end
-        end
-        #Job.import(parsed_job)
-      rescue Exception
+      rescue Exception => e
+        puts "======Scrapping Failed =========#{e.message} ======Scrapping Failed ========="
       end
     end
 
