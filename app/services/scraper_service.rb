@@ -61,7 +61,7 @@ class ScraperService
                                 job_search_type: 1
                           }
                       puts ">>>>>>>>>>>>> #{job_hash}"
-                      job_hash = job_already_present job_hash
+                      #job_hash = job_already_present job_hash
                       jobs << job_hash if job_hash
                     end
                     page += 1
@@ -72,10 +72,12 @@ class ScraperService
                   uniq_user_ids = user_job_searches.pluck(:user_id).uniq
                   uniq_user_ids.each do |user_id|
                     parsed_job << jobs.map do |attrs|
-                      attrs.merge!(user_id: user_id)
-                      Job.new(attrs)
+                      user_jobs = Job.where(user_id: user_id).pluck(:url)
+                      if !user_jobs.include?(attrs[:url])
+                        attrs.merge!(user_id: user_id)
+                        Job.new(attrs)
+                      end
                     end
-                    #Job.import(parsed_job)
                   end
                 end
               end
@@ -86,18 +88,18 @@ class ScraperService
             Job.import(parsed_job)
           end
         end
-      rescue Exception => e
-        puts "======Scrapping Failed =========#{e.message} ======Scrapping Failed ========="
+
+      rescue Exception
       end
     end
 
-    def job_already_present job_hash
-      result = Job.pluck(:url).include? job_hash[:url]
-      if result
-        false
-      else
-        job_hash
-      end
-    end
+    # def job_already_present job_hash
+    #   result = Job.pluck(:url).include?(job_hash[:url]) && Job.pluck(:user_id).include?(job_hash[:user_id])
+    #   if result
+    #     false
+    #   else
+    #     job_hash
+    #   end
+    # end
   end
 end

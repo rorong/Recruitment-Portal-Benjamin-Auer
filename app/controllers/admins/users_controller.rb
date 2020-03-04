@@ -113,19 +113,13 @@ class Admins::UsersController < ApplicationController
   end
 
   def update
-    answer_param = params.dig(:user, :answer)
     current_user = User.find_by(email: params.dig(:user, :email))
-    if current_user.present? && params.dig(:user, :answer).present?
-      if params.dig(:user, :answer) == current_user.answer
-        current_user.update(user_params)
-        flash[:notice] = "User details succesfully updated!!!"
-        redirect_to admins_users_path
-      else
-        flash[:alert] = "Answer does not match!!!"
-        redirect_to edit_admins_user_path
-      end
+    if current_user.present?
+      current_user.update(user_params)
+      flash[:notice] = "User details succesfully updated!!!"
+      redirect_to admins_users_path
     else
-      flash[:alert] = "Please enter the answer!!!"
+      flash[:alert] = "User not found!!!"
       redirect_to edit_admins_user_path
     end
   end
