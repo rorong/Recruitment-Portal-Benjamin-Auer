@@ -24,8 +24,8 @@ class Admins::UsersController < ApplicationController
   end
 
   def create_plan
-    product_id=ENV['stripe_product_id']
     begin
+      product_id = Stripe::Product.list.data.first[:id]
       plan= Stripe::Plan.create({
               amount: (params[:amount].to_i*100).to_s,
               currency: 'usd',
