@@ -23,7 +23,7 @@ class JobMailer < ApplicationMailer
       user_jobs.flatten!
       @jobs = user_jobs
     end
-    mail(to: user.email, subject: 'Jobs') if user.present?
+    mail(to: user.email, subject: 'Jobs', from: 'no-reply@email.com') if user.present?
   end
 
   def jobs_for_included_keyword(keyword)

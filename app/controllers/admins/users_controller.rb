@@ -7,6 +7,19 @@ class Admins::UsersController < ApplicationController
     @package=Package.all
   end
 
+  def new_email_plan
+    @package = Package.new
+  end
+
+  def create_email_plan
+    package = Package.new(package_params)
+    if package.save
+      redirect_to admins_email_path, notice: "Email plan created successfully!"
+    else
+      redirect_to admins_email_path, error: "Something went wrong, please try later!!!"
+    end
+  end
+
   def update_email
     package=Package.find(params[:package])
     if package.update(name: params[:package_name] , plan_id: params[:payment_plan] , interval: params[:interval].to_i)
@@ -139,6 +152,12 @@ class Admins::UsersController < ApplicationController
 
   def user_params
     params.require(:user).permit(:email, :password, :password_confirmation, :gender,:first_name, :last_name, :answer,:include_job1, :include_job2, :include_job3, :not_include_job1, :not_include_job2, :not_include_job3)
+  end
+
+  def package_params
+    pp = params.require(:package).permit(:name, :plan_id)
+    pp[:interval] = params[:package][:interval].to_i if params[:package][:interval].present?
+    pp
   end
 
   def interval_generator(interval,interval_count)

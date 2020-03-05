@@ -1,0 +1,38 @@
+<%= render 'horizontal_sidebar'%>
+<div id="layoutSidenav">
+  <%= render 'vertical_sidebar'%>
+  <div id="layoutSidenav_content">
+    <main>
+      <div class="container-fluid">
+        <h1 class="mt-4">Dashboard</h1>
+        <ol class="breadcrumb mb-4">
+          <li class="breadcrumb-item active">Create Plan</li>
+        </ol>
+        <div class="jumbotron ">
+          <h2>Create Email Plan</h2>
+          <%= form_for(@package, url: admins_create_email_plan_path, multipart: true) do |f|%>
+            <div class="form-group">
+              <%= f.label :name%>
+              <%= f.text_field :name, class: "form-control", required: true %>
+            </div>
+            <div class="form-group">
+              <%= f.label :interval%>
+              <%= f.select :interval, options_for_select( Package.intervals.keys.map { |w| [w, Package.intervals.keys.index(w)]}), {include_blank: "--Select an interval--"}, {class:'custom-select', required: true} %>
+            </div>
+
+            <div class="form-group">
+              <%= f.label :plan_id %>
+               <%= f.select :plan_id, options_for_select(Plan.pluck(:name, :id)), {include_blank: '--Select a plan--'}, {class:'custom-select', required: true} %>
+            </div>
+
+
+            <div class="form-group">
+              <%= f.submit "Create", class: "btn btn-success" %>
+            </div>
+          <% end %>
+          <%= link_to "Back", admins_plan_path, class: "btn btn-primary" %>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>

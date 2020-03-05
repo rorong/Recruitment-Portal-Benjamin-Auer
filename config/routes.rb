@@ -18,6 +18,8 @@ Rails.application.routes.draw do
     get '/edit_plan' => 'users#edit_plan', as: :edit_plan
     put '/update_plan' => 'users#update_plan', as: :update_plan
     delete '/delete_plan' => 'users#delete_plan', as: :delete_plan
+    get '/new_email_plan' => 'users#new_email_plan', as: :new_email_plan
+    post '/create_email_plan' => 'users#create_email_plan', as: :create_email_plan
     get '/email' => 'users#email_plan'
     get '/edit_email' => 'users#edit_email'
     put '/update_email' => 'users#update_email'

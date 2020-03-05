@@ -9,6 +9,8 @@
           <li class="breadcrumb-item active">You have following plans</li>
         </ol>
         <h1>Email Plans</h1>
+         <%= link_to 'Create Email Package', admins_new_email_plan_path, class: "btn btn-primary" %>
+        <br>
         <br>
         <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
           <thead>
@@ -28,7 +30,7 @@
                 <td><%= package.plan.name %></td>
                 <td>$<%= package.plan.display_price %></td>
                 <td><%= link_to 'Edit',admins_edit_email_path(id:package.id) %></td>
-               
+
               </tr>
            <%end %>
           </tbody>
