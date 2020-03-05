@@ -14,7 +14,7 @@
             <%#= render "devise/shared/error_messages", resource: resource %>
             <div class="form-group">
               <%= f.label :email %><br />
-              <%= f.email_field :email, autofocus: true, autocomplete: "email",class: "form-control", placeholder: "Enter email" %>
+              <%= f.email_field :email, autofocus: true, autocomplete: "email",class: "form-control",readonly: true, placeholder: "Enter email" %>
             </div>
             <div class="form-group">
               <%= f.label :first_name %><br />
@@ -55,15 +55,15 @@
               <div class="row">
                 <div class="col-md-6">
                   <%= f.label :include_job %>
-                  <%= text_field_tag :include_job1, "#{f.object.include_job1}", class: 'form-control' %>
-                  <%= text_field_tag :include_job2, "#{f.object.include_job2}", class: 'form-control' %>
-                  <%= text_field_tag :include_job3, "#{f.object.include_job3}", class: 'form-control' %>
+                  <%= text_field_tag :include_job1, "#{f.object.include_job1}", class: 'form-control unique jobs_search_keys' %>
+                  <%= text_field_tag :include_job2, "#{f.object.include_job2}", class: 'form-control unique jobs_search_keys' %>
+                  <%= text_field_tag :include_job3, "#{f.object.include_job3}", class: 'form-control unique jobs_search_keys' %>
                 </div>
                 <div class="col-md-6">
                   <%= f.label :dont_include_job %>
-                  <%= text_field_tag :not_include_job1, "#{f.object.not_include_job1}", class: 'form-control' %>
-                  <%= text_field_tag :not_include_job2, "#{f.object.not_include_job2}", class: 'form-control' %>
-                  <%= text_field_tag :not_include_job3, "#{f.object.not_include_job3}", class: 'form-control' %>
+                  <%= text_field_tag :not_include_job1, "#{f.object.not_include_job1}", class: 'form-control unique jobs_search_keys' %>
+                  <%= text_field_tag :not_include_job2, "#{f.object.not_include_job2}", class: 'form-control unique jobs_search_keys' %>
+                  <%= text_field_tag :not_include_job3, "#{f.object.not_include_job3}", class: 'form-control unique jobs_search_keys' %>
                 </div>
               </div>
             </div>
@@ -118,6 +118,20 @@
 </div>
 
 <script>
+   $.validator.addMethod("unique", function(value, element) {
+    var parentForm = $(element).closest('form');
+    var timeRepeated = 0;
+    if (value != '') {
+      $(parentForm.find('.jobs_search_keys')).each(function () {
+        if ($(this).val() === value) {
+          timeRepeated++;
+        }
+      });
+    }
+    return timeRepeated === 1 || timeRepeated === 0;
+  }, "*Job keys should be unique");
+
+
    $(document).ready(function () {
    $(".edit_user").validate({
     rules: {

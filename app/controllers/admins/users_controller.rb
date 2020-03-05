@@ -8,39 +8,41 @@ class Admins::UsersController < ApplicationController
   end
 
   def update_email
-    plan=Plan.find(params[:id])
     package=Package.find(params[:package])
-
-    package.update(name:params[:package_name] , plan_id:plan.id , interval: params[:interval].to_i)
-    redirect_to admins_email_path
+    if package.update(name: params[:package_name] , plan_id: params[:payment_plan] , interval: params[:interval].to_i)
+      redirect_to admins_email_path, notice: "Email package updated successfully!"
+    else
+      redirect_to admins_email_path, error: "Something went wrong!!!"
+    end
   end
 
   def edit_email
-    @package=Package.find(params[:id])
+    @package = Package.find(params[:id])
   end
 
   def new_plan
   end
 
   def create_plan
-
     product_id=ENV['stripe_product_id']
-    plan= Stripe::Plan.create({
-            amount: (params[:amount].to_i*100).to_s,
-            currency: 'usd',
-            nickname: params[:plan_name],
-            interval: params[:interval],
-            interval_count: params[:interval_count],
-            product: product_id,
-          })
-
-    Plan.create(plan_id: plan.id,
-                name: params[:plan_name] ,
-                display_price: params[:amount] ,
-                interval:params[:interval],
-                interval_count:params[:interval_count])
-
-    redirect_to admins_plan_path, notice: "Plan successfully created!!!"
+    begin
+      plan= Stripe::Plan.create({
+              amount: (params[:amount].to_i*100).to_s,
+              currency: 'usd',
+              nickname: params[:plan_name],
+              interval: params[:interval],
+              interval_count: params[:interval_count],
+              product: product_id,
+            })
+      Plan.create(plan_id: plan.id,
+                  name: params[:plan_name] ,
+                  display_price: params[:amount] ,
+                  interval:params[:interval],
+                  interval_count:params[:interval_count])
+      redirect_to admins_plan_path, notice: "Plan successfully created!!!"
+    rescue Exception => e
+      redirect_to admins_plan_path, error: e.message
+    end
   end
 
   def existing_plan
@@ -136,7 +138,7 @@ class Admins::UsersController < ApplicationController
   private
 
   def user_params
-    params.require(:user).permit(:email, :password, :password_confirmation, :gender,:first_name, :last_name, :include_job1, :include_job2, :include_job3, :not_include_job1, :not_include_job2, :not_include_job3)
+    params.require(:user).permit(:email, :password, :password_confirmation, :gender,:first_name, :last_name, :answer,:include_job1, :include_job2, :include_job3, :not_include_job1, :not_include_job2, :not_include_job3)
   end
 
   def interval_generator(interval,interval_count)

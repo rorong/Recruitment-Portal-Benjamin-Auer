@@ -3,18 +3,36 @@ class JobMailer < ApplicationMailer
 
   def job_email(user)
     @user= user
-    @jobs = @user.jobs
-    # include_job = user.include_job1? || user.include_job2? || user.include_job3?
+    user_jobs = []
+    included_keywords = [@user.include_job1, @user.include_job2, @user.include_job3].reject!(&:blank?)
+    not_included_keywords = [@user.not_include_job1, @user.not_include_job2, @user.not_include_job3].reject!(&:blank?)
 
-    # not_include_job = user.not_include_job1? || user.not_include_job2? || user.not_include_job3?
+    if included_keywords.present?
+      included_keywords.each do |keyword|
+        user_jobs << jobs_for_included_keyword(keyword)
+      end
+    elsif not_included_keywords.present?
+      not_included_keywords.each do |keyword|
+        user_jobs << jobs_for_not_included_keyword(keyword)
+      end
+    else
+      user_jobs << @user.jobs
+    end
 
-    # if (include_job && !not_include_job) || (include_job && not_include_job)
-    #   @jobs = Job.where("title = ? OR title = ? OR title = ?", user.include_job1, user.include_job2, user.include_job3)
-    # elsif !include_job && not_include_job
-    #   @jobs = Job.where.not("title = ? OR title = ? OR title = ?", user.not_include_job1, user.not_include_job2, user.not_include_job3)
-    # else
-    #   @jobs = Job.all
-    # end
-    mail(to: user.email, subject: 'Jobs') if user.present? #&& @jobs.present?
+    if user_jobs.count > 0
+      user_jobs.flatten!
+      @jobs = user_jobs
+    end
+    mail(to: user.email, subject: 'Jobs') if user.present?
+  end
+
+  def jobs_for_included_keyword(keyword)
+    jobs = @user.jobs.where("lower(title) ~* '#{keyword}\\M'")
+    return jobs
+  end
+
+  def jobs_for_not_included_keyword(keyword)
+    jobs = @user.jobs.where.not("lower(title) ~* '#{keyword}\\M'")
+    return jobs
   end
 end

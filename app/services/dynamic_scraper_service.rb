@@ -36,7 +36,7 @@ class DynamicScraperService
               browser.button(:value => 'Jobs suchen').click
               pagination_url = "https://jobs.derstandard.at/jobsuche/#{page}"
               browser.goto(pagination_url)
-
+              sleep 2
               pagination_parse_page = Nokogiri::HTML(browser.html)
               pagination_datas = pagination_parse_page.css('#resultWithPagingSection>ul>li').search('.resultListItemContent')
 
@@ -62,8 +62,11 @@ class DynamicScraperService
               end
               page += 1
               parsed_job << jobs.map do |attrs|
-                attrs.merge!(user_id: id)
-                Job.new(attrs)
+                user_jobs = Job.where(user_id: id).pluck(:url)
+                if !user_jobs.include?(attrs[:url])
+                  attrs.merge!(user_id: id)
+                  Job.new(attrs)
+                end
               end
             end
             #job_ids = Job.import(parsed_job)
@@ -73,7 +76,10 @@ class DynamicScraperService
             job_ids = Job.import(parsed_job)
           end
         end
-      rescue Exception
+      rescue Exception => e
+        puts "Dynamic Scrapper Failed Due to >>> #{e.message}"
+        sleep(2)
+        retry
       end
     end
 
