@@ -70,9 +70,10 @@ class ScraperService
                   # Seeding jobs for users
                   user_job_searches = JobSearch.where("location = ? AND designation = ?", location, designation)
                   uniq_user_ids = user_job_searches.pluck(:user_id).uniq
+                  user_jobs = Job.where(user_id: user_id).pluck(:url)
                   uniq_user_ids.each do |user_id|
                     parsed_job << jobs.map do |attrs|
-                      user_jobs = Job.where(user_id: user_id).pluck(:url)
+                      #user_jobs = Job.where(user_id: user_id).pluck(:url)
                       if !user_jobs.include?(attrs[:url])
                         attrs.merge!(user_id: user_id)
                         Job.new(attrs)

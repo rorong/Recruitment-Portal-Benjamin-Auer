@@ -12,8 +12,9 @@ class DynamicScraperService
         if user_ids.present?
           parsed_job = []
           user_ids.each do |id|
-            designation = User.find_by(id: id).job_search.designation
-            location = User.find_by(id: id).job_search.location
+            user = User.find_by(id: id)
+            designation = user.job_search.designation
+            location = user.job_search.location
             jobs = Array.new
             browser = Watir::Browser.new :chrome
             browser.goto('https://jobs.derstandard.at/jobsuche')
@@ -61,8 +62,8 @@ class DynamicScraperService
                 end
               end
               page += 1
+              user_jobs = Job.where(user_id: id).pluck(:url)
               parsed_job << jobs.map do |attrs|
-                user_jobs = Job.where(user_id: id).pluck(:url)
                 if !user_jobs.include?(attrs[:url])
                   attrs.merge!(user_id: id)
                   Job.new(attrs)
