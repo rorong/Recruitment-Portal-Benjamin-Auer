@@ -11,7 +11,7 @@ class DynamicScraperService
       begin
         if user_ids.present?
           parsed_job = []
-          user_ids.each do |id|
+          [1].each do |id|
             user = User.find_by(id: id)
             designation = user.job_search.designation
             location = user.job_search.location
@@ -79,8 +79,8 @@ class DynamicScraperService
         end
       rescue Exception => e
         puts "Dynamic Scrapper Failed Due to >>> #{e.message}"
-        sleep(2)
-        retry
+        #sleep(2)
+        #retry
       end
     end
 
