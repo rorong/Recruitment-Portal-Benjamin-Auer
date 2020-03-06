@@ -27,7 +27,7 @@ class DynamicScraperService
             per_page = datas.count
             total = parse_page.css('#jobSearchMenuSection').css('.page-list-count').text.split(' ')[2].to_i * per_page
             last_page = (total.to_f / per_page.to_f).round
-            while page <= last_page
+            while page <= 3
               pagination_url = "https://jobs.derstandard.at/jobsuche/#{page}"
               browser.goto(pagination_url)
 

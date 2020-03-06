@@ -43,7 +43,7 @@ class ScraperService
 
                   last_page = (total.to_f / per_page.to_f).round
 
-                  while page <= last_page
+                  while page <= 3
                     pagination_url = page > 1 ? "https://www.karriere.at/jobs/#{formatted_designation}/#{formatted_location}?page=#{page}" : "https://www.karriere.at/jobs/#{formatted_designation}/#{formatted_location}"
                     pagination_parse_page = Nokogiri::HTML(open(pagination_url))
                     pagination_datas =  pagination_parse_page.css('div.m-jobsListItem__dataContainer')
