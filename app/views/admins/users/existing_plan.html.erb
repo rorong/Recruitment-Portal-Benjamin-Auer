@@ -30,7 +30,7 @@
                 <td>$<%= plan.display_price%></td>
                 <td>every <%=pluralize(plan.interval_count,plan.interval)%></td>
                 <td><%= link_to 'Edit', admins_edit_plan_path(id: plan.plan_id) %></td>
-                <td><%= link_to 'Delete', admins_delete_plan_path(id: plan.plan_id), data: { confirm: "Are you sure you want to cancel your account?" }, method: :delete %></td>
+                <td><%= link_to 'Delete', admins_delete_plan_path(id: plan.plan_id), data: { confirm: "Are you sure you want to delete plan?" }, method: :delete %></td>
               </tr>
            <% end %>
           </tbody>
