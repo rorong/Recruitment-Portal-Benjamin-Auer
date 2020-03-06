@@ -12,8 +12,8 @@ module JobScrapper
     config.load_defaults 5.2
     config.active_job.queue_adapter = :sidekiq
 
-    config.time_zone = 'Kolkata'
-    config.active_record.default_timezone = :local # Or :utc
+    #config.time_zone = 'Kolkata'
+    #config.active_record.default_timezone = :local # Or :utc
 
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration can go into files in config/initializers
