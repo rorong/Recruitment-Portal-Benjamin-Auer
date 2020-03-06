@@ -11,7 +11,7 @@ class DynamicScraperService
       begin
         if user_ids.present?
           parsed_job = []
-          [1].each do |id|
+          user_ids.each do |id|
             user = User.find_by(id: id)
             designation = user.job_search.designation
             location = user.job_search.location
@@ -28,7 +28,7 @@ class DynamicScraperService
             per_page = datas.count
             total = parse_page.css('#jobSearchMenuSection').css('.page-list-count').text.split(' ')[2].to_i * per_page
             last_page = (total.to_f / per_page.to_f).round
-            while page <= 1
+            while page <= last_page
               pagination_url = "https://jobs.derstandard.at/jobsuche/#{page}"
               browser.goto(pagination_url)
 
@@ -79,8 +79,8 @@ class DynamicScraperService
         end
       rescue Exception => e
         puts "Dynamic Scrapper Failed Due to >>> #{e.message}"
-        #sleep(2)
-        #retry
+        sleep(2)
+        retry
       end
     end
 
