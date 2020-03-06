@@ -22,10 +22,10 @@
   #   class: SubscriptionAutoRenewal
 
   scrap_job_worker:
-    cron: '0 52 12 * * *'
+    cron: '0 06 13 * * *'
     class: ScrapJobWorker
   dynamic_scrap_worker:
-    cron: '0 55 12 * * *'
+    cron: '0 58 13 * * *'
     class: DynamicScrapWorker
   # daily_email_worker:
   #   cron: "0 0 4 * * *" #Every Day at 4am assuming scrapping will take 3-4 hours
