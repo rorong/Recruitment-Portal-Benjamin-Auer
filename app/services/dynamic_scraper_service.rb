@@ -74,7 +74,8 @@ class DynamicScraperService
           end
           if parsed_job.count > 0
             parsed_job.flatten!
-            job_ids = Job.import(parsed_job)
+            parsed_job.reject!(&:blank?)
+            job_ids = Job.import(parsed_job) if parsed_job.present?
           end
         end
       rescue Exception => e

@@ -85,7 +85,8 @@ class ScraperService
           end
           if parsed_job.count > 0
             parsed_job.flatten!
-            Job.import(parsed_job)
+            parsed_job.reject!(&:blank?)
+            Job.import(parsed_job) if parsed_job.present?
           end
         end
 
