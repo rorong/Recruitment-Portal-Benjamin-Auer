@@ -25,11 +25,11 @@
     cron: '0 0 0 * * *'
     class: ScrapJobWorker
   dynamic_scrap_worker:
-    cron: '0 0 0 * * *'
+    cron: '0 45 0 * * *'
     class: DynamicScrapWorker
   # daily_email_worker:
   #   cron: "0 0 4 * * *" #Every Day at 4am assuming scrapping will take 3-4 hours
-  #   class: DailyEmailWorker
+  #   class: DailyEmailWorke
   # weekly_email_worker:
   #   every: ["1m"] #"0 0 4 * * MON"
   #   class: WeeklyEmailWorker

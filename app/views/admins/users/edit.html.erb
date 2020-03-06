@@ -84,25 +84,17 @@
                       <tr>
                         <th>Plan Name</th>
                         <th>Amount</th>
-                        <th>Currency</th>
-                        <th>Select Plan</th>
+                        <th></th>
                       </tr>
-                      <% plan_list = list_all_plan %>
-                      <%unless plan_list.blank?%>
-                        <% plan_list.each do |plan_list| %>
-                          <% if plan_list['nickname'] != plan['nickname']%>
-                            <tr>
-                              <td><%= plan_list['nickname'] %></td>
-                              <td><%= plan_list['amount']%></td>
-                              <td><%= plan_list['currency']%></td>
-                              <td><%= link_to 'Pay', payment_form_path(plan_is: plan['id']), class: "stripe-button btn btn-success" %></td>
-                            </tr>
-                          <% end %>
-                        <% end %>
+                      <%if package = @user.package%>
+                        <tr>
+                          <td><%=package.name%></td>
+                          <td>$<%=package.plan.display_price if package.plan.present? && package.plan.display_price.present?%></td>
+                          <td><%= link_to 'Unsubscribe', admins_cancel_subscription_path(id: @user.id), method: :delete, class: 'btn btn-danger', confirm: 'Are you sure you want to Unsubscribe from this plan?' %></td>
+                        </tr>
                       <%end%>
                     </table>
                   </div>
-                  <%= link_to 'Unsubscribe', cancel_subscription_path, class: 'btn btn-danger', confirm: 'Are you sure you want to Unsubscribe from this plan?' %>
                 </div>
               </div>
             <%end %>

@@ -64,6 +64,14 @@
 #   product: product.id,
 # })
 
+
+  admin = Admin.new(
+      :email                 => "jobsearchadvanced@gmail.com",
+      :password              => "Testformails",
+      :password_confirmation => "Testformails"
+  )
+  admin.save!
+
 product_id = Stripe::Product.create({
         name: 'Job Scraper',
         type: 'service',
@@ -81,7 +89,7 @@ product_id = Stripe::Product.create({
       interval="month"
       interval_count=3
     when 'yearly'
-      amount = 2000 
+      amount = 2000
       interval="year"
       interval_count=1
   end
@@ -94,8 +102,8 @@ product_id = Stripe::Product.create({
      interval_count: interval_count,
      nickname: plan_name,
      product: product_id,
-   }) 
-    
+   })
+
     Plan.create(name: plan_name,
           display_price: amount,
           interval: interval,
@@ -106,7 +114,7 @@ product_id = Stripe::Product.create({
     puts e.message
   end
 end
- 
+
 Package.create(name: "Gold", plan_id: Plan.find_by(name:"monthly").id,interval:0)
 Package.create(name: "Bronze", plan_id: Plan.find_by(name:"quaterly").id,interval: 1)
 Package.create(name: "Silver", plan_id: Plan.find_by(name:"yearly").id,interval: 2)

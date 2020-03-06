@@ -135,7 +135,7 @@ class Admins::UsersController < ApplicationController
       redirect_to admins_users_path
     else
       flash[:alert] = "User not found!!!"
-      redirect_to edit_admins_user_path
+      redirect_to edit_admins_user_path(current_user.id)
     end
   end
 
@@ -145,6 +145,22 @@ class Admins::UsersController < ApplicationController
       user.destroy
       flash[:notice] = "User succesfully destroyed!!!"
       redirect_to admins_users_path
+    end
+  end
+
+  def cancel_subscription
+    user = User.find_by_id(params[:id])
+    if user.present?
+      response = user.cancel_subscription
+      error = response[0]
+      success = response[1]
+      if error
+        redirect_to edit_admins_user_path(user.id), error: error
+      else
+        redirect_to edit_admins_user_path(user.id), notice: "Subscription has been cancelled successfully."
+      end
+    else
+      redirect_to admins_users_path, error: "User not found"
     end
   end
 

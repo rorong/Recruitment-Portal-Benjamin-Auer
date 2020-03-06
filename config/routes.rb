@@ -23,6 +23,7 @@ Rails.application.routes.draw do
     get '/email' => 'users#email_plan'
     get '/edit_email' => 'users#edit_email'
     put '/update_email' => 'users#update_email'
+    delete '/cancel_subscription/:id' => 'users#cancel_subscription', as: :cancel_subscription
   end
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
   get 'dashboard' => 'dashboards#dashboard', as: 'user_dashboard'
@@ -32,7 +33,7 @@ Rails.application.routes.draw do
   get 'destroy_job_detail', to: 'dashboards#destroy_job_detail'
   get 'display_karriere', to: 'dashboards#display_karriere'
   get 'display_derstandard', to: 'dashboards#display_derstandard'
-  devise_for :admins, path: 'admin', controllers: { sessions: "admins/sessions", registrations: 'admins/registrations' }
+  devise_for :admins, path: 'admin', controllers: { sessions: "admins/sessions", registrations: 'admins' }
 
   devise_for :users, controllers: { registrations: 'registrations' }
 
