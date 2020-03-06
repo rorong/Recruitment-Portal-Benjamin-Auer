@@ -14,8 +14,7 @@ class WeeklyEmailWorker
   end
 
   def schedule_next_weekly_job_email(user_id)
-    test_start_at = Time.now + 2.minutes
-    #next_start_at = 0.weeks.from_now.next_occurring(Date::DAYNAMES[0].downcase.to_sym).end_of_day + 4.hours
-    WeeklyEmailWorker.perform_at( test_start_at, user_id )
+    next_start_at = 0.weeks.from_now.next_occurring(Date::DAYNAMES[0].downcase.to_sym).end_of_day + 4.hours
+    WeeklyEmailWorker.perform_at( next_start_at, user_id )
   end
 end

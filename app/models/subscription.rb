@@ -8,13 +8,11 @@ class Subscription < ApplicationRecord
     if package.present?
       case package.interval
         when "Daily"
-          test_start_at = Time.now + 1.minutes
-          #start_at = Date.today.end_of_day + 4.hours
-          DailyEmailWorker.perform_at( test_start_at, self.user_id )
+          start_at = Date.today.end_of_day + 4.hours
+          DailyEmailWorker.perform_at( start_at, self.user_id )
         when "Weekly"
-          test_start_at = Time.now + 2.minutes
-          #start_at = 0.weeks.from_now.next_occurring(Date::DAYNAMES[0].downcase.to_sym).end_of_day + 4.hours
-          WeeklyEmailWorker.perform_at( test_start_at, self.user_id )
+          start_at = 0.weeks.from_now.next_occurring(Date::DAYNAMES[0].downcase.to_sym).end_of_day + 4.hours
+          WeeklyEmailWorker.perform_at( start_at, self.user_id )
         when "Every 2 Weeks"
           start_at = 1.weeks.from_now.next_occurring(Date::DAYNAMES[0].downcase.to_sym).end_of_day + 4.hours
           TwoWeekEmailWorker.perform_at( start_at, self.user_id )
