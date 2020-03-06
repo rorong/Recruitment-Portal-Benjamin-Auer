@@ -14,7 +14,8 @@ class DailyEmailWorker
   end
 
   def schedule_next_daily_job_email(user_id)
-    next_start_at = Date.today.end_of_day + 4.hours
-    DailyEmailWorker.perform_at( next_start_at, user_id )
+    test_start_at = Time.now + 1.minutes
+    #next_start_at = Date.today.end_of_day + 4.hours
+    DailyEmailWorker.perform_at( test_start_at, user_id )
   end
 end
