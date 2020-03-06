@@ -33,7 +33,7 @@ Rails.application.routes.draw do
   get 'destroy_job_detail', to: 'dashboards#destroy_job_detail'
   get 'display_karriere', to: 'dashboards#display_karriere'
   get 'display_derstandard', to: 'dashboards#display_derstandard'
-  devise_for :admins, path: 'admin', controllers: { sessions: "admins/sessions", registrations: 'admins' }
+  devise_for :admins, path: 'admin', controllers: { sessions: "admins/sessions", registrations: 'admins/registrations' }
 
   devise_for :users, controllers: { registrations: 'registrations' }
 
