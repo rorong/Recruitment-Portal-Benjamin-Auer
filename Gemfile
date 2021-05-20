@@ -36,7 +36,7 @@ gem 'jbuilder', '~> 2.5'
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.1.0', require: false
 
-gem 'nokogiri', '~> 1.6', '>= 1.6.6.2'
+gem 'nokogiri', '~> 1.11'
 gem 'httparty', '~> 0.17.0'
 gem 'activerecord-import', '~> 0.15.0'
 gem 'devise'
