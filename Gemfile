@@ -37,7 +37,7 @@ gem 'jbuilder', '~> 2.5'
 gem 'bootsnap', '>= 1.1.0', require: false
 
 gem 'nokogiri', '~> 1.6', '>= 1.6.6.2'
-gem 'httparty', '~> 0.17.0'
+gem 'httparty', '~> 0.21.0'
 gem 'activerecord-import', '~> 0.15.0'
 gem 'devise'
 gem 'bootstrap', '~> 4.0'
